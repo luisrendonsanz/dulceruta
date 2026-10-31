@@ -12,6 +12,8 @@ export default defineConfig({
         main: resolve(import.meta.dirname, 'index.html'),
         register: resolve(import.meta.dirname, 'registro.html'),
         editor: resolve(import.meta.dirname, 'editor.html'),
+        privacy: resolve(import.meta.dirname, 'privacidad.html'),
+        report: resolve(import.meta.dirname, 'reportar.html'),
       },
     },
   },
