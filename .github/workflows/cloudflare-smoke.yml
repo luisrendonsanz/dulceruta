@@ -73,3 +73,25 @@ jobs:
             sleep 5
           done
           [[ "$found" == "1" ]] || { echo 'ERROR: vista previa no disponible en Cloudflare'; exit 1; }
+      - name: Comprobar rutas de privacidad y reportes en produccion
+        shell: bash
+        run: |
+          set -euo pipefail
+          found=0
+          for attempt in {1..40}; do
+            p=$(curl -L -sS --max-time 12 -o /tmp/dr-privacy.html -w '%{http_code}' 'https://dulceruta.pages.dev/privacidad.html' || true)
+            r=$(curl -L -sS --max-time 12 -o /tmp/dr-report.html -w '%{http_code}' 'https://dulceruta.pages.dev/reportar.html' || true)
+            if [[ "$p" == "200" ]] && [[ "$r" == "200" ]] && grep -q 'id="legal-name"' /tmp/dr-privacy.html && grep -q 'id="report-form"' /tmp/dr-report.html; then
+              echo 'Privacidad y formulario de reportes publicados en Cloudflare: OK'
+              found=1
+              break
+            fi
+            echo "Aun no desplegado: intento $attempt, privacidad=$p reporte=$r"
+            sleep 5
+          done
+          [[ "$found" == "1" ]] || exit 1
+          config=$(curl -L -sS --max-time 15 'https://dulceruta.pages.dev/api/aviso-config')
+          echo "$config" | jq -e 'has("responsable") and has("domicilio") and has("correo")'
+          status=$(curl -L -sS --max-time 15 -o /dev/null -w '%{http_code}' 'https://dulceruta.pages.dev/api/admin/reportes')
+          [[ "$status" == "401" ]] || { echo "Reportes privados no protegidos: HTTP $status"; exit 1; }
+          echo 'Los reportes requieren autenticacion de administrador.'
