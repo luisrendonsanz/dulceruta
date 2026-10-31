@@ -2,7 +2,38 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#34204d">
 <title>Editor de ubicaciones | DulceRuta</title><link rel="icon" href="./icon.svg" type="image/svg+xml">
-</head><body class="page-bg"><header class="simple-header"><a href="./">← Volver al mapa</a><a href="./" class="simple-logo">✦ DulceRuta</a><span>EDITOR LOCAL · SIN ACCESO AL SERVIDOR</span></header>
+<style>
+  [hidden] { display: none !important; }
+  .admin-gate { min-height: 100dvh; display: grid; place-items: center; padding: 24px; background: linear-gradient(145deg, #faf7fc, #f2e7f9); }
+  .admin-gate-card { width: min(100%, 420px); border-radius: 23px; border: 1px solid #e7daf0; background: white; padding: 30px; box-shadow: 0 14px 45px #28133716; }
+  .admin-gate-logo { font-size: 26px; font-weight: 900; color: #37244d; letter-spacing: -.8px; text-decoration: none; }
+  .admin-gate-logo span { color: #f26b37; }
+  .admin-gate-card h1 { color: #352346; font-size: 25px; margin: 22px 0 8px; line-height: 1.2; }
+  .admin-gate-card p { font-size: 13px; line-height: 1.6; color: #83718e; }
+  .admin-gate-card label { display: block; color: #635371; font-size: 13px; font-weight: 800; margin-top: 20px; }
+  .admin-gate-card input { width: 100%; box-sizing: border-box; background: #fff; border: 1px solid #d8c8e4; color: #30233b; border-radius: 11px; padding: 14px; font: inherit; margin-top: 8px; font-size: 16px; }
+  .admin-gate-card button { width: 100%; border: 0; color: white; background: #ee6c35; border-radius: 12px; margin-top: 17px; padding: 14px; font-weight: 900; cursor: pointer; font-size: 14px; }
+  .admin-gate-card button:disabled { opacity: .6; cursor: wait; }
+  .admin-gate-error { color: #b8342b !important; margin-bottom: 0; }
+  .admin-gate-back { display: inline-block; color: #76528b; margin-top: 20px; font-weight: 700; font-size: 12px; text-decoration: none; }
+  .admin-logout { border: 1px solid #ead6f3; background: #fff; color: #6f398f; padding: 10px 12px; border-radius: 9px; font-weight: 800; font-size: 12px; cursor: pointer; }
+  @media(max-width:600px) { .admin-gate-card { padding: 22px; } }
+</style></head><body class="page-bg">
+<section id="admin-gate" class="admin-gate" aria-labelledby="admin-gate-title">
+  <div class="admin-gate-card">
+    <a href="./" class="admin-gate-logo"><span>✦</span> DulceRuta</a>
+    <h1 id="admin-gate-title">Acceso al administrador</h1>
+    <p>Introduce tu contraseña para abrir el editor de ubicaciones. El mapa y el registro de casas siguen siendo públicos.</p>
+    <form id="admin-gate-form">
+      <label for="admin-gate-password">Contraseña</label>
+      <input id="admin-gate-password" type="password" autocomplete="current-password" autocapitalize="none" spellcheck="false" required autofocus>
+      <button id="admin-gate-submit" type="submit">Entrar al administrador</button>
+      <p id="admin-gate-error" class="admin-gate-error" role="alert" hidden></p>
+    </form>
+    <a class="admin-gate-back" href="./">← Volver al mapa público</a>
+  </div>
+</section>
+<div id="admin-shell" hidden><header class="simple-header"><a href="./">← Volver al mapa</a><a href="./" class="simple-logo">✦ DulceRuta</a><button id="admin-logout" class="admin-logout" type="button">Cerrar sesión</button></header>
 <main class="content-wrap"><div class="page-intro"><span class="overline">HERRAMIENTA DEL ORGANIZADOR</span><h1>Administrar <em>ubicaciones</em></h1><p>Importa varios JSON, revisa los puntos y descarga una lista pública. Los cambios del editor son locales; únicamente el propietario del repositorio puede publicar en GitHub.</p></div>
 <div class="editor-layout">
   <div class="editor-main">
@@ -30,5 +61,5 @@
       <div class="notice notice-purple"><strong>Publicación en GitHub Pages</strong><p>Descarga <code>puntos.json</code>, abre tu repositorio en GitHub, entra a <code>public/puntos.json</code>, pulsa editar (✎), sustituye el contenido por el descargado y confirma el commit en <code>main</code>. GitHub Actions lo publicará automáticamente. No subas los JSON originales con nombres y apellidos.</p></div>
     </section>
   </div>
-  <aside class="aside"><div class="aside-dark"><span>☑</span><h3>Revisa antes de publicar</h3><p>El editor valida los archivos y excluye datos personales del JSON consolidado.</p><hr><strong>Sin contraseña falsa</strong><p>Cualquiera puede usar este editor en su propio navegador, pero solo alguien con permisos sobre tu GitHub puede publicar cambios.</p></div></aside>
-</div></main><script type="module" src="./src/editor.ts"></script></body></html>
+  <aside class="aside"><div class="aside-dark"><span>☑</span><h3>Revisa antes de publicar</h3><p>El editor valida los archivos y excluye datos personales del JSON consolidado.</p><hr><strong>Contraseña de acceso básico</strong><p>Esta contraseña evita accesos casuales, pero no protege realmente un sitio estático. Solo los permisos de GitHub permiten publicar cambios.</p></div></aside>
+</div></main></div><script type="module" src="./src/editor-gate.ts"></script></body></html>

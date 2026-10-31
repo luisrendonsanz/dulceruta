@@ -62,7 +62,7 @@ También puedes reemplazar `public/puntos.json` en tu proyecto local y hacer `gi
 
 ### Importante: permisos de administrador
 
-La ruta `/editor.html` es pública porque GitHub Pages no tiene autenticación de servidor. Cualquier visitante puede importar archivos en **su propio navegador**, pero **NO puede cambiar tu sitio publicado** sin permisos de escritura en el repositorio GitHub. No agregues una contraseña en JavaScript ni un token de GitHub al frontend: sería inseguro.
+El acceso a `/editor.html` ahora muestra una **contraseña de cortesía implementada en JavaScript**. Se conserva durante la pestaña actual y dispone de un botón «Cerrar sesión». **No es autenticación real**: el hash y el código del editor son públicos y una persona con conocimientos técnicos puede saltarse la pantalla. Nunca introduzcas un token de GitHub en el frontend. Solo quien tiene permisos de escritura en el repositorio puede publicar cambios. El mapa y `/registro.html` continúan públicos. La contraseña no se publica en el repositorio y puedes solicitar que se cambie.
 
 El borrador se guarda en el `localStorage` del dispositivo. Para no perder los puntos, descarga `puntos.json` periódicamente. El borrador **no** se sincroniza entre celulares o computadoras.
 
