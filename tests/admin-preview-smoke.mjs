@@ -24,7 +24,9 @@ await page.route('**/api/admin/puntos',route=>{
 });
 try{
   await page.goto('http://127.0.0.1:4173/editor.html',{waitUntil:'domcontentloaded',timeout:30000});
-  await page.waitForSelector('#preview-map .leaflet-map-pane',{timeout:15000});
+  await page.waitForSelector('#preview-map',{state:'visible',timeout:15000});
+  await page.waitForFunction(()=>document.querySelector('#preview-map')?.classList.contains('leaflet-container'));
+  // Leaflet's internal map pane has no layout dimensions: its 'visible' state is not meaningful.
   const submissions=Array.from({length:6},(_,i)=>({
     name:'casa-'+(i+1)+'.json',
     mimeType:'application/json',
