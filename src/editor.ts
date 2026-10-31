@@ -194,7 +194,7 @@ getElement<HTMLInputElement>('files').addEventListener('change', async event => 
 });
 
 getElement('export').addEventListener('click', () => {
-  if (!draft.length) { setMessage('El borrador está vacío; no hay puntos que exportar.'); return; }
+  if (!draft.length && !confirm('El borrador no contiene casas o locales. ¿Descargar un puntos.json vacío para retirar todos los lugares cuando lo publiques en GitHub?')) return;
   // Defensa adicional: esta transformación excluye todos los campos ajenos al esquema público.
   const clean = draft.map(readPublicPoint).filter((p): p is PublicPoint => !!p);
   if (clean.length !== draft.length) { setMessage('Hay registros inválidos. Corrígelos antes de exportar.'); return; }
