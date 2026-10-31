@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es"><head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#34204d"><meta name="description" content="Registra tu casa o local para regalar dulces en El Rosario.">
+  <link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <title>Registrar mi casa | DulceRuta</title>
+</head><body class="page-bg">
+<header class="simple-header"><a href="./">← Volver al mapa</a><a href="./" class="simple-logo">✦ DulceRuta</a><span>EL ROSARIO, SINALOA</span></header>
+<main class="content-wrap">
+  <div class="page-intro"><span class="overline">PARTICIPA EN DULCERUTA</span><h1>¡Registra tu casa <em>o negocio!</em></h1><p>Si vas a regalar dulces, coloca tu ubicación en el mapa y envía el archivo al organizador por WhatsApp. No necesitas una cuenta.</p></div>
+  <div class="content-grid">
+    <form id="register-form" class="panel" novalidate>
+      <div class="step"><b>1</b><div><h2>Datos del participante</h2><p>Tu nombre y apellido son para identificar la solicitud. No se muestran en el mapa.</p></div></div>
+      <div class="two-cols"><label>Nombre *<input id="name" type="text" placeholder="Tu nombre" maxlength="70" autocomplete="given-name" required></label><label>Apellido *<input id="surname" type="text" placeholder="Tu apellido" maxlength="90" autocomplete="family-name" required></label></div>
+      <label>¿Qué vas a registrar?<select id="kind"><option value="casa">Mi casa</option><option value="local">Mi local o negocio</option></select></label>
+      <label>Nombre público del lugar <small>(opcional para casas)</small><input id="place-name" placeholder="Ej. Casa de los dulces / Abarrotes Lupita" maxlength="90"></label>
+      <label>Referencia para llegar <small>(opcional y pública)</small><input id="reference" placeholder="Ej. Calle Hidalgo, junto a la plaza" maxlength="180"></label>
+      <label>Horario de entrega <small>(opcional)</small><input id="hours" placeholder="Ej. 6 p. m. a 9 p. m." maxlength="90"></label>
+      <div class="step"><b>2</b><div><h2>Marca tu ubicación</h2><p>Elige exactamente dónde está tu casa o local.</p></div></div>
+      <div class="notice"><strong>Es mejor colocar tu ubicación directamente en el mapa.</strong><p>Acerca el mapa con los dedos y <strong>toca tu casa o local</strong> para fijar el marcador. Es más confiable que escribir una dirección; puedes arrastrarlo si se mueve o queda mal.</p></div>
+      <div id="registration-map" class="form-map" aria-label="Mapa para marcar tu casa o negocio"></div>
+      <div class="map-status"><span id="pin-status">Toca el mapa para colocar un marcador.</span><button id="remove-pin" type="button" hidden>Quitar</button></div>
+      <div class="step"><b>3</b><div><h2>Descarga el JSON y envíalo</h2><p>Este formulario no publica tu casa automáticamente.</p></div></div>
+      <label class="consent"><input id="consent" type="checkbox"><span>Confirmo que soy responsable de este lugar o tengo permiso para registrarlo. Acepto que su ubicación, nombre público, referencia y horario puedan mostrarse en DulceRuta tras revisión. Mi nombre y apellido se incluirán solo en la solicitud que enviaré al organizador.</span></label>
+      <div id="form-error" class="error" role="alert" hidden></div>
+      <button class="btn btn-orange full" type="submit">1. Descargar mi archivo JSON ↓</button>
+      <button class="btn btn-outline full" id="share-file" type="button">2. Compartir archivo (elegir WhatsApp)</button>
+      <div id="form-success" class="success" role="status" hidden></div>
+      <div class="instructions"><h3>¿Cómo mandarlo por WhatsApp?</h3><ol><li>Completa tus datos, marca el mapa y descarga el archivo JSON.</li><li>Abre el chat de WhatsApp del organizador.</li><li>Adjunta el archivo <strong>.json como documento</strong> desde Descargas o Archivos, no como foto.</li><li>Envía el archivo. El organizador revisará la solicitud antes de publicarla.</li></ol><p>En algunos celulares puedes usar el botón «Compartir archivo» y seleccionar WhatsApp. Confirma el envío dentro de WhatsApp.</p></div>
+    </form>
+    <aside class="aside"><div class="aside-dark"><span>✧</span><h3>¡Únete a la ruta!</h3><p>Ayuda a las familias de El Rosario a encontrar los lugares participantes.</p><hr><strong>Publicación con revisión</strong><p>Tu solicitud no aparecerá en el mapa hasta que la apruebe el organizador.</p></div><div class="aside-light"><strong>Cuida tu privacidad</strong><p>Evita escribir nombres de personas en la descripción pública. Solo registra viviendas con autorización real.</p></div></aside>
+  </div>
+</main><script type="module" src="./src/registro.ts"></script></body></html>

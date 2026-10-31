@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#34204d">
+  <meta name="description" content="Encuentra casas y locales que regalan dulces en El Rosario, Sinaloa.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <title>DulceRuta | El Rosario</title>
+</head>
+<body>
+<div class="shell">
+  <header class="header">
+    <a class="logo" href="./"><span class="logo-mark">✦</span><span><strong>DulceRuta</strong><small>EL ROSARIO · SINALOA</small></span></a>
+    <nav class="header-actions" aria-label="Navegación principal">
+      <a class="nav-join" href="./registro.html">Registrar mi casa</a>
+      <button class="btn btn-orange" id="install" type="button">Instalar app ↓</button>
+    </nav>
+  </header>
+  <main class="map-layout">
+    <section class="map-sidebar">
+      <div class="welcome">
+        <span class="overline">✦ LA RUTA MÁS DULCE</span>
+        <h1>¡Que comience la <em>dulce aventura!</em></h1>
+        <p>Explora los lugares participantes, elige un punto y descubre cómo llegar caminando.</p>
+        <a href="./registro.html" class="join-banner"><span class="join-symbol">⌂</span><span><strong>¿Vas a regalar dulces?</strong><small>Registra tu casa o negocio</small></span><span aria-hidden="true">→</span></a>
+      </div>
+      <div class="searchwrap"><input id="search" placeholder="Buscar un lugar o calle" type="search" aria-label="Buscar puntos"></div>
+      <div class="list-heading"><span><strong>Puntos participantes</strong><small id="list-caption">Cargando...</small></span><b id="counter">—</b></div>
+      <div id="places" class="place-list" aria-live="polite"></div>
+      <div class="sidebar-bottom">✧ Visita los lugares con respeto y acompaña a los menores.</div>
+    </section>
+    <section class="map-section" aria-label="Mapa de puntos donde regalan dulces">
+      <div id="map" class="map"></div>
+      <div class="map-controls"><span class="map-chip">● El Rosario, Sinaloa</span><button id="locate" type="button" class="btn btn-white">◎ Mi ubicación</button></div>
+      <div id="place-details" class="place-details" hidden></div>
+    </section>
+  </main>
+  <button id="help" class="help" aria-label="Ayuda para instalar" type="button">?</button>
+  <div id="message" class="message" role="status" hidden></div>
+  <div id="install-modal" class="modal-backdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="close-guide" aria-label="Cerrar" type="button">×</button>
+      <div class="modal-icon">✦</div><h2 id="modal-title">Lleva DulceRuta contigo</h2>
+      <p>Puedes agregarla a la pantalla de inicio de tu celular.</p>
+      <div class="tabs"><button id="ios" type="button">iPhone</button><button id="android" type="button">Android</button></div>
+      <ol id="install-steps"></ol>
+      <p class="modal-note">Instalar es opcional. El mapa y las rutas necesitan internet.</p>
+      <button class="btn btn-orange full" id="done" type="button">Entendido</button>
+    </div>
+  </div>
+</div>
+<script type="module" src="./src/main.ts"></script>
+</body>
+</html>

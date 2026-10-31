@@ -1,0 +1,34 @@
+<!doctype html><html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#34204d">
+<title>Editor de ubicaciones | DulceRuta</title><link rel="icon" href="./icon.svg" type="image/svg+xml">
+</head><body class="page-bg"><header class="simple-header"><a href="./">← Volver al mapa</a><a href="./" class="simple-logo">✦ DulceRuta</a><span>EDITOR LOCAL · SIN ACCESO AL SERVIDOR</span></header>
+<main class="content-wrap"><div class="page-intro"><span class="overline">HERRAMIENTA DEL ORGANIZADOR</span><h1>Administrar <em>ubicaciones</em></h1><p>Importa varios JSON, revisa los puntos y descarga una lista pública. Los cambios del editor son locales; únicamente el propietario del repositorio puede publicar en GitHub.</p></div>
+<div class="editor-layout">
+  <div class="editor-main">
+    <section class="panel"><div class="step"><b>1</b><div><h2>Importar varios JSON</h2><p>Selecciona hasta 100 solicitudes juntas, recibidas por WhatsApp, o un archivo de puntos público para recuperar datos.</p></div></div>
+      <label class="upload" for="files">Seleccionar archivos JSON<input id="files" type="file" accept=".json,application/json" multiple></label>
+      <div id="import-result" class="muted" role="status"></div>
+      <div id="review" hidden><div class="review-top"><strong id="review-count">Pendientes por revisar</strong><button id="select-all" class="btn-text" type="button">Seleccionar todas</button></div><div id="reviews" class="reviews"></div><div class="two-buttons"><button id="approve" class="btn btn-orange" type="button">Agregar seleccionadas al borrador</button><button id="discard" class="btn btn-outline" type="button">Descartar</button></div><p class="muted tiny">Antes de aprobar confirma personalmente que la casa o local dio autorización real. La casilla del JSON por sí sola no comprueba identidad.</p></div>
+    </section>
+    <section class="panel"><div class="step"><b>2</b><div><h2>Agregar o corregir un punto</h2><p>Opcional: introduce una dirección o coloca directamente un marcador en el mapa.</p></div></div>
+      <label>Nombre público<input id="edit-name" maxlength="90" placeholder="Ej. Abarrotes Lupita"></label>
+      <label>Referencia para llegar<input id="edit-ref" maxlength="180" placeholder="Calle o referencia"></label>
+      <label>Horario<input id="edit-hours" maxlength="90" placeholder="Ej. 6 p. m. a 9 p. m."></label>
+      <label>Tipo<select id="edit-kind"><option value="casa">Casa</option><option value="local">Local</option></select></label>
+      <label>Buscar dirección (aproximada)<input id="address-search" maxlength="180" placeholder="Calle, colonia, El Rosario"></label>
+      <button id="search-address" class="btn btn-outline" type="button">⌕ Buscar dirección</button>
+      <div id="address-results" class="suggestions" hidden></div>
+      <div id="editor-map" class="form-map" aria-label="Mapa para ajustar ubicación"></div>
+      <div id="edit-coordinate" class="map-status">Toca el mapa para colocar el marcador.</div>
+      <p class="muted tiny">Verifica físicamente el punto: los resultados de búsqueda pueden ser imprecisos.</p>
+      <div class="two-buttons"><button id="save-point" class="btn btn-orange" type="button">+ Agregar punto al borrador</button><button id="cancel-edit" class="btn btn-outline" type="button" hidden>Cancelar edición</button></div>
+    </section>
+    <section class="panel"><div class="step"><b>3</b><div><h2>Borrador y exportación</h2><p id="draft-counter">0 puntos en el borrador</p></div></div>
+      <div id="draft-list" class="draft-list"></div>
+      <div class="two-buttons"><button id="export" class="btn btn-orange" type="button">Descargar puntos.json ↓</button><button id="reset" class="btn btn-outline" type="button">Restablecer al publicado</button></div>
+      <div class="notice notice-purple"><strong>Publicación en GitHub Pages</strong><p>Descarga <code>puntos.json</code>, abre tu repositorio en GitHub, entra a <code>public/puntos.json</code>, pulsa editar (✎), sustituye el contenido por el descargado y confirma el commit en <code>main</code>. GitHub Actions lo publicará automáticamente. No subas los JSON originales con nombres y apellidos.</p></div>
+    </section>
+  </div>
+  <aside class="aside"><div class="aside-dark"><span>☑</span><h3>Revisa antes de publicar</h3><p>El editor valida los archivos y excluye datos personales del JSON consolidado.</p><hr><strong>Sin contraseña falsa</strong><p>Cualquiera puede usar este editor en su propio navegador, pero solo alguien con permisos sobre tu GitHub puede publicar cambios.</p></div></aside>
+</div></main><script type="module" src="./src/editor.ts"></script></body></html>
