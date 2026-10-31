@@ -1,0 +1,32 @@
+name: Revisar responsive en Chrome con pantallas móviles
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/responsive-qa.yml"
+      - "tests/responsive-smoke.mjs"
+  workflow_dispatch:
+permissions: {}
+jobs:
+  responsive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --no-audit --no-fund
+      - run: npm install --no-save --no-audit --no-fund playwright-core@1.56.1
+      - name: Crear la web local
+        run: npm run build
+      - name: Lanzar servidor Vite
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 >/tmp/vite-qa.log 2>&1 &
+          for i in {1..30}; do curl -fsS http://127.0.0.1:4173/registro.html >/dev/null && exit 0 || sleep 1; done
+          cat /tmp/vite-qa.log
+          exit 1
+      - name: Comprobar tamaños y tutorial
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
+        run: node tests/responsive-smoke.mjs
