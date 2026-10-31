@@ -1,0 +1,13 @@
+<!doctype html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#34204d"><title>Reportar una ubicación | DulceRuta</title><link rel="icon" href="./icon.svg" type="image/svg+xml"></head>
+<body class="page-bg"><header class="simple-header"><a href="./">← Volver al mapa</a><a href="./" class="simple-logo">✦ DulceRuta</a><span>EL ROSARIO, SINALOA</span></header>
+<main class="content-wrap legal-page"><div class="page-intro"><span class="overline">PROTECCIÓN DE UBICACIONES</span><h1>Reportar una <em>ubicación</em></h1><p>Si una vivienda aparece sin permiso o con datos incorrectos, informa al organizador. Tu reporte no será público.</p></div>
+<form id="report-form" class="panel">
+<label for="report-place">Casa o negocio publicado *<select id="report-place" required><option value="">Cargando ubicaciones…</option></select></label>
+<label for="report-reason">Motivo *<select id="report-reason" required>
+<option value="sin_permiso">El domicilio fue publicado sin permiso</option><option value="solicitar_retiro">Soy responsable del lugar y solicito retirarlo</option><option value="ubicacion_incorrecta">El marcador está mal ubicado</option><option value="horario_incorrecto">El horario es incorrecto</option><option value="otro">Otro problema</option></select></label>
+<label for="report-detail">Detalles (opcional, hasta 280 caracteres)<textarea id="report-detail" maxlength="280" rows="3" placeholder="Explica brevemente el problema. No incluyas datos de menores, números de teléfono ni documentos."></textarea></label>
+<div class="report-trap" aria-hidden="true"><label for="report-web">Sitio web<input id="report-web" tabindex="-1" type="text" autocomplete="off"></label></div>
+<p class="muted">El administrador revisará el reporte. <strong>Este formulario no retira una casa automáticamente.</strong> Para derechos ARCO consulta <a href="./privacidad.html">Privacidad y seguridad</a>.</p>
+<button id="report-submit" type="submit" class="btn btn-orange full">Enviar reporte</button><p id="report-result" role="status" aria-live="polite" class="muted"></p>
+</form></main><script type="module" src="./src/reportar.ts"></script></body></html>
