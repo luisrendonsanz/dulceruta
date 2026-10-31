@@ -15,7 +15,6 @@
   height:50px;padding:10px 12px;margin-top:8px;
   background:#fff;color:#3b2b47;border:1px solid #e8def0;border-radius:11px;
   font-size:16px;line-height:1.25;font-variant-numeric:tabular-nums;
-  -webkit-appearance:none;appearance:none;
 }
 .panel .time-range input[type="time"]::-webkit-date-and-time-value{text-align:left;min-height:1.25em}
 .panel .time-range input[type="time"]::-webkit-calendar-picker-indicator{cursor:pointer}
