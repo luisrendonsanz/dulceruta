@@ -147,6 +147,7 @@ async function retirePublicPoints(ids:string[]){
  if(typeof saved.revision!=='number')throw Error('Respuesta D1 inválida');
  revision=saved.revision;published=next;
  draft=draft.filter(p=>!ids.includes(p.id));saveDraft();
+ pending=pending.filter(item=>!ids.includes(item.point.id));drawPending();
  renderReports();
 }
 async function retireReported(id:string){
@@ -161,7 +162,11 @@ getElement('retire-event').addEventListener('click',async()=>{
  if(!published.length){setMessage('No hay casas públicas por retirar.');return;}
  if(!confirm('¿Finalizó el evento? Esto RETIRARÁ TODAS las casas del mapa público y actualizará D1 inmediatamente.'))return;
  if(!confirm('Confirma definitivamente que quieres vaciar todo el mapa público.'))return;
- try{await retirePublicPoints(published.map(p=>p.id));setMessage('Se retiraron todas las ubicaciones públicas. Verifica la página del mapa.');}
+ try{
+  await retirePublicPoints(published.map(p=>p.id));
+  draft=[];pending=[];saveDraft();drawPending();
+  setMessage('Se retiraron todas las ubicaciones públicas y se vació el borrador local. Verifica el mapa público.');
+ }
  catch(e){setMessage(e instanceof Error?e.message:'No se pudieron retirar las ubicaciones.');}
 });
 const val = (id: string) => getElement<HTMLInputElement>(id).value.trim();
