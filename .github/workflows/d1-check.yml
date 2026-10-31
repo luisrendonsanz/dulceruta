@@ -1,0 +1,21 @@
+name: Validar migracion D1 (sin publicar)
+on:
+  push:
+    branches: [feature/cloudflare-d1]
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Dependencias
+        run: npm install --no-audit --no-fund
+      - name: Validar Pages Function
+        run: node --check 'functions/api/[[path]].js'
+      - name: Probar frontend y datos
+        run: npm test
+      - name: Compilar frontend
+        run: npm run build
