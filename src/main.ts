@@ -55,7 +55,11 @@ function selectPoint(p: PublicPoint) {
   link.href = walkingDirections(p.lat, p.lng);
   link.target = '_blank'; link.rel = 'noopener noreferrer'; link.className = 'btn btn-orange full';
   link.textContent = '↗ Cómo llegar a pie';
-  details.replaceChildren(titleRow, address, hours, link);
+  const report = document.createElement('a');
+  report.href = ROOT + 'reportar.html?p=' + encodeURIComponent(p.id);
+  report.textContent = 'Reportar esta ubicación';
+  report.className = 'place-report-link';
+  details.replaceChildren(titleRow, address, hours, link, report);
   details.hidden = false;
   render();
 }
