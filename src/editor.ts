@@ -80,6 +80,90 @@ getElement('preview-all').addEventListener('click', focusPreview);
 let searchTimer: number | undefined;
 let searchAbort: AbortController | null = null;
 let lastSearchTime = 0;
+type Report = {id:string;punto_id:string;motivo:string;detalle:string;creado:string};
+let reports: Report[] = [];
+const reportReasons:Record<string,string> = {
+  sin_permiso:'Domicilio publicado sin permiso',
+  solicitar_retiro:'Solicitud de retirada',
+  ubicacion_incorrecta:'Ubicación incorrecta',
+  horario_incorrecto:'Horario incorrecto',
+  otro:'Otra incidencia',
+};
+function clearReportElement() {
+  const list=getElement('reports-list');list.replaceChildren();return list;
+}
+function renderReports() {
+  const list=clearReportElement();
+  getElement('reports-count').textContent=reports.length+' reporte(s) pendiente(s)';
+  if(!reports.length){list.append(textElement('p','muted','No hay reportes pendientes.'));return;}
+  for(const r of reports){
+    const place=published.find(p=>p.id===r.punto_id);
+    const item=textElement('div','admin-report','');
+    item.append(textElement('strong','',reportReasons[r.motivo]||'Reporte de ubicación'));
+    item.append(textElement('p','',place?place.nombre+' · '+place.direccion:'La ubicación ya no figura en el mapa público'));
+    if(r.detalle)item.append(textElement('p','',r.detalle));
+    item.append(textElement('small','',r.creado+' · ID '+r.punto_id));
+    const actions=textElement('div','admin-report-actions','');
+    if(place){
+      const retire=document.createElement('button');
+      retire.type='button';retire.className='btn btn-outline danger';retire.textContent='Retirar esta casa del mapa público';
+      retire.addEventListener('click',()=>void retireReported(r.punto_id));
+      actions.append(retire);
+    }
+    const resolve=document.createElement('button');
+    resolve.type='button';resolve.className='btn btn-outline';resolve.textContent='Marcar atendido';
+    resolve.addEventListener('click',()=>void resolveReport(r.id));
+    actions.append(resolve);item.append(actions);list.append(item);
+  }
+}
+async function loadReports(){
+ try{
+  const response=await fetch(ROOT+'api/admin/reportes',{credentials:'same-origin',cache:'no-store'});
+  if(!response.ok)throw Error('HTTP '+response.status);
+  const result:{reportes?:Report[]}=await response.json();
+  reports=Array.isArray(result.reportes)?result.reportes:[];
+  renderReports();
+ }catch{getElement('reports-count').textContent='No se pudieron cargar los reportes. Revisa tu sesión y vuelve a intentar.';}
+}
+async function resolveReport(id:string){
+ if(!confirm('¿Ya verificaste y atendiste este reporte?'))return;
+ try{
+  const response=await fetch(ROOT+'api/admin/reportes/resolver',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});
+  if(!response.ok)throw Error('HTTP '+response.status);
+  await loadReports();
+  setMessage('Reporte marcado como atendido.');
+ }catch{setMessage('No se pudo actualizar el reporte.');}
+}
+async function retirePublicPoints(ids:string[]){
+ if(revision===null)throw Error('No se pudo verificar la versión publicada.');
+ const next=published.filter(p=>!ids.includes(p.id));
+ const response=await fetch(ROOT+'api/admin/puntos',{
+  method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},
+  body:JSON.stringify({points:next,revision}),
+ });
+ if(response.status===409)throw Error('Otro dispositivo cambió el mapa. Recarga y vuelve a verificar.');
+ if(!response.ok)throw Error('Error HTTP '+response.status);
+ const saved:{revision?:number}=await response.json();
+ if(typeof saved.revision!=='number')throw Error('Respuesta D1 inválida');
+ revision=saved.revision;published=next;
+ draft=draft.filter(p=>!ids.includes(p.id));saveDraft();
+ renderReports();
+}
+async function retireReported(id:string){
+ const place=published.find(p=>p.id===id);
+ if(!place)return;
+ if(!confirm('¿RETIRAR del mapa público «'+place.nombre+'» inmediatamente? Esta acción modifica D1 y no solo el borrador.'))return;
+ try{await retirePublicPoints([id]);setMessage('Casa retirada del mapa público. Comprueba el mapa. Marca el reporte atendido tras verificarlo.');}
+ catch(e){setMessage(e instanceof Error?e.message:'No se pudo retirar la ubicación.');}
+}
+getElement('reports-refresh').addEventListener('click',()=>void loadReports());
+getElement('retire-event').addEventListener('click',async()=>{
+ if(!published.length){setMessage('No hay casas públicas por retirar.');return;}
+ if(!confirm('¿Finalizó el evento? Esto RETIRARÁ TODAS las casas del mapa público y actualizará D1 inmediatamente.'))return;
+ if(!confirm('Confirma definitivamente que quieres vaciar todo el mapa público.'))return;
+ try{await retirePublicPoints(published.map(p=>p.id));setMessage('Se retiraron todas las ubicaciones públicas. Verifica la página del mapa.');}
+ catch(e){setMessage(e instanceof Error?e.message:'No se pudieron retirar las ubicaciones.');}
+});
 const val = (id: string) => getElement<HTMLInputElement>(id).value.trim();
 const setMessage = (value: string) => getElement('import-result').textContent = value;
 
@@ -367,6 +451,7 @@ async function init(): Promise<void> {
     } else draft = published.map(p => ({ ...p }));
   } catch { draft = published.map(p => ({ ...p })); }
   drawDraft();
+  await loadReports();
   if (draft.length) map.fitBounds(L.latLngBounds(draft.map(p => [p.lat, p.lng])), { maxZoom: 15, padding: [40, 40] });
 }
 void init();
