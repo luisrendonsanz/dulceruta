@@ -15,7 +15,11 @@
       <label>¿Qué vas a registrar?<select id="kind"><option value="casa">Mi casa</option><option value="local">Mi local o negocio</option></select></label>
       <label>Nombre público del lugar <small>(opcional para casas)</small><input id="place-name" placeholder="Ej. Casa de los dulces / Abarrotes Lupita" maxlength="90"></label>
       <label>Referencia para llegar <small>(opcional y pública)</small><input id="reference" placeholder="Ej. Calle Hidalgo, junto a la plaza" maxlength="180"></label>
-      <label>Horario de entrega <small>(opcional)</small><input id="hours" placeholder="Ej. 6 p. m. a 9 p. m." maxlength="90"></label>
+      <div class="two-cols">
+        <label>Hora de inicio *<input id="hours-start" type="time" value="18:00" required></label>
+        <label>Hora de finalización *<input id="hours-end" type="time" value="21:00" required></label>
+      </div>
+      <p class="muted tiny">Selecciona las horas en tu celular. La hora de finalización debe ser posterior al inicio (mismo día).</p>
       <div class="step"><b>2</b><div><h2>Marca tu ubicación</h2><p>Elige exactamente dónde está tu casa o local.</p></div></div>
       <div class="notice"><strong>Es mejor colocar tu ubicación directamente en el mapa.</strong><p>Acerca el mapa con los dedos y <strong>toca tu casa o local</strong> para fijar el marcador. Es más confiable que escribir una dirección; puedes arrastrarlo si se mueve o queda mal.</p></div>
       <div id="registration-map" class="form-map" aria-label="Mapa para marcar tu casa o negocio"></div>

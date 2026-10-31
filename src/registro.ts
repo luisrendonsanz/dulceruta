@@ -40,7 +40,12 @@ function createSubmission(): ParticipantSubmission | null {
   getElement('form-error').hidden = true;
   const nombre = val('name'); const apellido = val('surname');
   const tipo: PlaceKind = val('kind') === 'local' ? 'local' : 'casa';
-  const place = val('place-name'); const reference = val('reference'); const hours = val('hours');
+  const place = val('place-name'); const reference = val('reference');
+  const start = val('hours-start'); const end = val('hours-end');
+  if (!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(start)) { error('Selecciona la hora de inicio.', 'hours-start'); return null; }
+  if (!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(end)) { error('Selecciona la hora de finalización.', 'hours-end'); return null; }
+  if (end <= start) { error('La hora de finalización debe ser posterior a la de inicio.', 'hours-end'); return null; }
+  const hours = start + ' a ' + end;
   if (nombre.length < 2) { error('Escribe un nombre de al menos 2 letras.', 'name'); return null; }
   if (apellido.length < 2) { error('Escribe un apellido de al menos 2 letras.', 'surname'); return null; }
   if (tipo === 'local' && !place) { error('Escribe el nombre del negocio o local.', 'place-name'); return null; }
