@@ -101,9 +101,16 @@ function render() {
 
 async function loadPoints() {
   try {
-    const response = await fetch(ROOT + 'puntos.json', { cache: 'no-store' });
-    if (!response.ok) throw new Error('No se pudo descargar puntos.json');
-    const raw: unknown = await response.json();
+    let raw: unknown;
+    try {
+      const live = await fetch(ROOT + 'api/puntos', { cache: 'no-store' });
+      if (!live.ok || !live.headers.get('content-type')?.includes('application/json')) throw new Error('API no disponible');
+      raw = await live.json();
+    } catch {
+      const fallback = await fetch(ROOT + 'puntos.json', { cache: 'no-store' });
+      if (!fallback.ok) throw new Error('No se pudo cargar el mapa');
+      raw = await fallback.json();
+    }
     if (!Array.isArray(raw)) throw new Error('El JSON público debe ser un arreglo');
     const ids = new Set<string>();
     points = raw.flatMap(value => {
