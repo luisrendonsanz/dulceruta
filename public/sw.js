@@ -1,5 +1,5 @@
 // La PWA guarda la interfaz, NO almacena tiles de OpenStreetMap ni promete mapas offline.
-const VERSION = 'dulceruta-github-v2';
+const VERSION = 'dulceruta-github-v3';
 const ROOT = self.registration.scope;
 const SHELL = ['index.html', 'registro.html', 'puntos.json', 'manifest.webmanifest', 'icon-192.png'];
 self.addEventListener('install', event => {
@@ -16,6 +16,8 @@ self.addEventListener('fetch', event => {
   const req = event.request;
   const url = new URL(req.url);
   if (req.method !== 'GET' || url.origin !== self.location.origin || !url.href.startsWith(ROOT)) return;
+  // API: nunca almacenar respuestas de D1 ni sesiones en Cache Storage.
+  if (url.pathname.startsWith('/api/')) { event.respondWith(fetch(req, {cache:'no-store'})); return; }
   // JSON siempre se consulta primero en red para reflejar altas/bajas recientes.
   if (url.pathname.endsWith('/puntos.json')) {
     event.respondWith(fetch(req, { cache: 'no-store' }).then(res => {
