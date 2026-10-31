@@ -3,6 +3,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { getElement, ROSARIO, registerPwa, downloadJson } from './common';
 import type { ParticipantSubmission, PlaceKind } from './data';
+import { validateDeliveryHours } from './time-range';
 
 const map = L.map('registration-map').setView([ROSARIO.lat, ROSARIO.lng], 15);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -42,10 +43,17 @@ function createSubmission(): ParticipantSubmission | null {
   const tipo: PlaceKind = val('kind') === 'local' ? 'local' : 'casa';
   const place = val('place-name'); const reference = val('reference');
   const start = val('hours-start'); const end = val('hours-end');
-  if (!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(start)) { error('Selecciona la hora de inicio.', 'hours-start'); return null; }
-  if (!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(end)) { error('Selecciona la hora de finalización.', 'hours-end'); return null; }
-  if (end <= start) { error('La hora de finalización debe ser posterior a la de inicio.', 'hours-end'); return null; }
-  const hours = start + ' a ' + end;
+  const range = validateDeliveryHours(start, end);
+  if (!range.ok) {
+    const messages = {
+      start: 'Selecciona una hora de inicio válida.',
+      end: 'Selecciona una hora de finalización válida.',
+      order: 'La hora de finalización debe ser posterior al inicio (el mismo día).',
+    };
+    error(messages[range.reason], range.reason === 'start' ? 'hours-start' : 'hours-end');
+    return null;
+  }
+  const hours = range.hours;
   if (nombre.length < 2) { error('Escribe un nombre de al menos 2 letras.', 'name'); return null; }
   if (apellido.length < 2) { error('Escribe un apellido de al menos 2 letras.', 'surname'); return null; }
   if (tipo === 'local' && !place) { error('Escribe el nombre del negocio o local.', 'place-name'); return null; }

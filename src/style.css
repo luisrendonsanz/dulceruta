@@ -6,3 +6,17 @@
 .leaflet-container{font-family:inherit!important}.leaflet-control-attribution{font-size:10px!important}
 @media(max-width:900px){.map-layout{grid-template-columns:320px minmax(0,1fr)}.content-grid,.editor-layout{grid-template-columns:1fr}.aside{display:none}.welcome{padding:22px 20px}.welcome h1{font-size:27px}}
 @media(max-width:650px){.shell{height:100dvh;min-height:0}.header{height:65px;padding:0 12px}.logo-mark{height:37px;width:37px;border-radius:10px;font-size:24px}.logo strong{font-size:20px}.logo small{font-size:8px}.header-actions{gap:6px}.nav-join{font-size:10px;padding:9px 7px}.header-actions>.btn{font-size:10px;padding:10px 8px}.map-layout{display:flex;flex-direction:column;overflow:auto}.map-section{order:0;min-height:43dvh;height:43dvh;flex-shrink:0}.map-sidebar{order:1;overflow:visible;flex-shrink:0}.welcome{padding:15px 18px 8px}.welcome h1{font-size:23px;margin:7px 0}.welcome p{font-size:12px;margin:7px 0}.join-banner{margin-top:12px}.searchwrap{margin:9px 16px 15px}.list-heading{padding:0 16px 12px}.place-list{overflow:visible;padding:0 16px}.map-controls{top:8px;left:8px;right:8px}.map-controls>*{font-size:10px;padding:10px}.map-chip{padding:10px 10px}.place-details{bottom:9px;left:9px;right:9px;width:auto;padding:13px}.place-details h3{font-size:16px}.place-details p{margin:4px 0}.place-details .hours{padding:8px;margin:7px 0}.simple-header{height:62px;padding:0 13px}.simple-header>span{display:none}.simple-logo{font-size:19px}.content-wrap{padding:24px 12px 42px}.panel{padding:17px;border-radius:16px}.two-cols{grid-template-columns:1fr;gap:0}.form-map{height:300px}.page-intro h1{font-size:29px}.help{right:15px;bottom:15px}}
+
+/* Controls nativos de hora: Safari iOS puede exceder el tamaño mínimo del grid. */
+.time-range{grid-template-columns:repeat(2,minmax(0,1fr));min-width:0;width:100%}
+.time-range>label{min-width:0;max-width:100%;overflow:hidden}
+.panel .time-range input[type="time"]{
+  display:block;box-sizing:border-box;width:100%;min-width:0;max-width:100%;
+  height:50px;padding:10px 12px;margin-top:8px;
+  background:#fff;color:#3b2b47;border:1px solid #e8def0;border-radius:11px;
+  font-size:16px;line-height:1.25;font-variant-numeric:tabular-nums;
+  -webkit-appearance:none;appearance:none;
+}
+.panel .time-range input[type="time"]::-webkit-date-and-time-value{text-align:left;min-height:1.25em}
+.panel .time-range input[type="time"]::-webkit-calendar-picker-indicator{cursor:pointer}
+@media(max-width:650px){.time-range{grid-template-columns:minmax(0,1fr);gap:2px}.panel .time-range input[type="time"]{width:100%;font-size:16px}}
