@@ -43,6 +43,18 @@ async function points(db){
  const rows=await db.prepare('SELECT id,nombre,direccion,horario,lat,lng,tipo FROM puntos ORDER BY nombre COLLATE NOCASE LIMIT 500').all();
  return rows.results||[];
 }
+// Reportes privados: tabla creada automáticamente sin borrar datos existentes.
+async function ensureReports(db){
+ await db.prepare("CREATE TABLE IF NOT EXISTS reportes (id TEXT PRIMARY KEY, punto_id TEXT NOT NULL, motivo TEXT NOT NULL, detalle TEXT NOT NULL DEFAULT '', estado TEXT NOT NULL DEFAULT 'pendiente', creado TEXT NOT NULL DEFAULT (datetime('now')))").run();
+}
+async function listReports(db){
+ await ensureReports(db);
+ return (await db.prepare("SELECT id,punto_id,motivo,detalle,creado FROM reportes WHERE estado='pendiente' ORDER BY creado DESC LIMIT 200").all()).results||[];
+}
+function privacyConfig(env){
+ const val=(name,max)=>typeof env[name]==='string'?env[name].trim().slice(0,max):'';
+ return {responsable:val('PRIVACY_RESPONSIBLE_NAME',160),domicilio:val('PRIVACY_RESPONSIBLE_ADDRESS',240),correo:val('PRIVACY_CONTACT_EMAIL',160)};
+}
 async function readJson(request,max){
  if(!request.headers.get('content-type')?.includes('application/json'))throw Error('content type');
  const raw=await request.text();
@@ -56,6 +68,28 @@ export async function onRequest({request,env}) {
    if(!env.DB)return err('D1 no vinculada',503);
    try {return response(await points(env.DB));}
    catch(e){console.error('D1 read',e);return err('D1 sin esquema',503);}
+ }
+ if(route==='/api/aviso-config'&&method==='GET')return response(privacyConfig(env));
+ if(route==='/api/reportes'&&method==='POST'){
+   if(!env.DB)return err('D1 no disponible',503);
+   if(request.headers.get('origin')!==new URL(request.url).origin)return err('Origen no autorizado',403);
+   let body;try{body=await readJson(request,1500);}catch{return err('Solicitud inválida');}
+   if(!object(body)||typeof body.puntoId!=='string'||body.puntoId.length>110||
+      !['sin_permiso','solicitar_retiro','ubicacion_incorrecta','horario_incorrecto','otro'].includes(body.motivo)||
+      typeof body.detalle!=='string'||body.detalle.length>280)return err('Reporte inválido');
+   if(body.sitio_web)return response({recibido:true});
+   try{
+     const exists=await env.DB.prepare('SELECT id FROM puntos WHERE id=? LIMIT 1').bind(body.puntoId).first();
+     if(!exists)return err('El lugar ya no está publicado',404);
+     await ensureReports(env.DB);
+     const prior=await env.DB.prepare("SELECT id FROM reportes WHERE punto_id=? AND motivo=? AND estado='pendiente' LIMIT 1").bind(body.puntoId,body.motivo).first();
+     if(prior)return response({recibido:true});
+     const total=await env.DB.prepare("SELECT COUNT(*) AS n FROM reportes WHERE estado='pendiente'").first();
+     if((total?.n||0)>=300)return err('Reportes temporalmente limitados. Contacta al organizador.',429);
+     await env.DB.prepare("INSERT INTO reportes(id,punto_id,motivo,detalle,estado) VALUES (?,?,?,?,'pendiente')")
+       .bind(crypto.randomUUID(),body.puntoId,body.motivo,body.detalle.trim()).run();
+     return response({recibido:true},201);
+   }catch(e){console.error('D1 report',e);return err('No se pudo registrar el reporte',503);}
  }
  if(!route.startsWith('/api/admin/'))return err('No encontrado',404);
  if(!env.DB||!secretOK(env))return err('Falta DB o ADMIN_PASSWORD',503);
@@ -73,6 +107,19 @@ export async function onRequest({request,env}) {
  }
  if(route==='/api/admin/logout'&&method==='POST')return response({authenticated:false},200,{'Set-Cookie':cookieName+'=; Max-Age=0; Path=/api/admin; Secure; HttpOnly; SameSite=Strict'});
  if(!(await validSession(request,env.ADMIN_PASSWORD)))return err('Sesión inválida',401);
+ if(route==='/api/admin/reportes'&&method==='GET'){
+   try{return response({reportes:await listReports(env.DB)});}
+   catch(e){console.error('D1 list reports',e);return err('No se pudieron cargar los reportes',503);}
+ }
+ if(route==='/api/admin/reportes/resolver'&&method==='POST'){
+   let body;try{body=await readJson(request,500);}catch{return err('Solicitud inválida');}
+   if(!object(body)||typeof body.id!=='string'||!/^[a-f0-9-]{36}$/.test(body.id))return err('ID inválido');
+   try{
+     await ensureReports(env.DB);
+     await env.DB.prepare("UPDATE reportes SET estado='atendido' WHERE id=? AND estado='pendiente'").bind(body.id).run();
+     return response({ok:true});
+   }catch(e){console.error('D1 resolve reports',e);return err('No se pudo atender el reporte',500);}
+ }
  if(route==='/api/admin/puntos'&&method==='GET'){
    try{
      const [list,meta]=await Promise.all([points(env.DB),env.DB.prepare('SELECT revision FROM meta WHERE id=1').first()]);
