@@ -18,6 +18,7 @@ let pointMarker: L.Marker | null = null;
 let selectedPosition: L.LatLng | null = null;
 let editingId: string | null = null;
 let published: PublicPoint[] = [];
+let revision: number | null = null;
 let draft: PublicPoint[] = [];
 type Pending = { point: PublicPoint; contact: string | null; source: string; checked: boolean };
 let pending: Pending[] = [];
@@ -199,7 +200,33 @@ getElement('export').addEventListener('click', () => {
   const clean = draft.map(readPublicPoint).filter((p): p is PublicPoint => !!p);
   if (clean.length !== draft.length) { setMessage('Hay registros inválidos. Corrígelos antes de exportar.'); return; }
   downloadJson(clean, 'puntos.json');
-  setMessage('Descargado puntos.json con ' + clean.length + ' lugares. Abre public/puntos.json en GitHub, pega su contenido y confirma los cambios en main.');
+  setMessage('Respaldo descargado; para actualizar el mapa usa «Publicar cambios».');
+});
+getElement('publish').addEventListener('click', async () => {
+  if (revision === null) { setMessage('D1 todavía no está conectada. No se puede publicar.'); return; }
+  const clean = draft.map(readPublicPoint).filter((p): p is PublicPoint => !!p);
+  if (clean.length !== draft.length) { setMessage('Hay registros inválidos; corrígelos antes de publicar.'); return; }
+  const warning = clean.length === 0
+    ? '¿Eliminar TODAS las ubicaciones del mapa público?'
+    : '¿Publicar ' + clean.length + ' lugares y reemplazar por completo los puntos del mapa público?';
+  if (!confirm(warning)) return;
+  const button = getElement<HTMLButtonElement>('publish'); button.disabled = true;
+  try {
+    const response = await fetch(ROOT + 'api/admin/puntos', {
+      method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({points:clean, revision}),
+    });
+    if (response.status === 409) { setMessage('Otro dispositivo cambió el mapa. Guarda un respaldo, restablece al publicado y revisa antes de reintentar.'); return; }
+    if (!response.ok) throw new Error('HTTP '+response.status);
+    const saved: {revision?:number} = await response.json();
+    if (typeof saved.revision !== 'number') throw new Error('La respuesta del servidor no es válida');
+    revision = saved.revision;
+    published = clean.map(p=>({...p}));
+    saveDraft();
+    setMessage('Publicado: ' + clean.length + ' lugares guardados en Cloudflare D1. Recarga el mapa público para comprobar.');
+  } catch (reason) {
+    setMessage('No se pudo publicar: '+(reason instanceof Error ? reason.message : 'error desconocido'));
+  } finally { button.disabled = false; }
 });
 getElement('reset').addEventListener('click', () => {
   if (!confirm('¿Borrar tu borrador local y volver a los puntos que están publicados en GitHub?')) return;
@@ -266,11 +293,13 @@ getElement('search-address').addEventListener('click', () => {
 
 async function init(): Promise<void> {
   try {
-    const response = await fetch(ROOT + 'puntos.json', { cache: 'no-store' });
-    if (!response.ok) throw new Error('JSON no disponible');
-    const raw: unknown = await response.json();
-    published = Array.isArray(raw) ? raw.flatMap(value => { const p = readPublicPoint(value); return p ? [p] : []; }) : [];
-  } catch { setMessage('No se pudieron leer los puntos publicados. Puedes crear una lista nueva.'); }
+    const response = await fetch(ROOT + 'api/admin/puntos', {credentials:'same-origin',cache:'no-store'});
+    if (!response.ok) throw new Error('HTTP '+response.status);
+    const result: {points?:unknown, revision?:unknown} = await response.json();
+    if (!Array.isArray(result.points) || typeof result.revision !== 'number') throw new Error('Respuesta D1 inválida');
+    revision = result.revision;
+    published = result.points.flatMap(value => { const p = readPublicPoint(value); return p ? [p] : []; });
+  } catch { setMessage('D1 no disponible o sesión vencida. Puedes editar el borrador, pero NO publicarlo hasta configurar D1.'); }
   try {
     const saved = localStorage.getItem(DRAFT_KEY);
     if (saved !== null) {
