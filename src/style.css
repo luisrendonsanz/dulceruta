@@ -72,3 +72,20 @@
 .admin-preview-popup small{color:#806b8e}
 .admin-preview-popup .admin-preview-warning{color:#af432b;font-weight:800}
 @media(max-width:650px){.admin-preview-map{height:310px}.admin-preview-head{align-items:stretch}.admin-preview-head button{width:100%}.admin-preview-legend{font-size:11px;gap:7px 12px}}
+
+/* Privacidad, seguridad y reportes públicos. */
+.legal-page{max-width:850px}
+.legal-section{margin-bottom:16px;line-height:1.65;color:#59496b}
+.legal-section h2{font-size:20px;margin:0 0 11px}
+.legal-section p{font-size:14px;margin:11px 0}
+.legal-section dl{font-size:13px}
+.legal-section dt{font-weight:900;margin-top:12px}
+.legal-section dd{margin:2px 0 0;overflow-wrap:anywhere}
+.legal-warning{background:#fff2df;border:1px solid #eac183;border-radius:10px;padding:13px;color:#784917}
+.legal-links{margin-top:10px;line-height:1.7}
+.legal-links a,.public-legal-footer a{color:#804a9f;font-weight:800}
+.public-legal-footer{text-align:center;font-size:12px;padding:5px 13px 26px}
+.place-report-link{display:block;text-align:center;font-size:12px;color:#8053a4;margin-top:12px}
+#report-form>label{display:block;font-size:13px;font-weight:800;margin:14px 0}
+#report-form select,#report-form textarea{box-sizing:border-box;display:block;min-width:0;max-width:100%;width:100%;padding:12px;border:1px solid #ddcde5;border-radius:10px;background:#fff;font:inherit;font-size:16px;margin-top:7px}
+.report-trap{position:absolute;left:-99999px;width:1px;height:1px;overflow:hidden}
