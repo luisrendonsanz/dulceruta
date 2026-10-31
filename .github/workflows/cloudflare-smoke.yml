@@ -48,7 +48,7 @@ jobs:
           found=0
           for attempt in {1..40}; do
             status=$(curl -L -sS --max-time 15 -o /tmp/dulceruta-registro.html -w '%{http_code}' 'https://dulceruta.pages.dev/registro.html' || true)
-            if [[ "$status" == "200" ]] && grep -q 'id="registration-tutorial-remember"' /tmp/dulceruta-registro.html && grep -q 'id="registration-tutorial-skip"' /tmp/dulceruta-registro.html && grep -q 'id="open-register-tour"' /tmp/dulceruta-registro.html; then
+            if [[ "$status" == "200" ]] && grep -q 'id="registration-tutorial-remember"' /tmp/dulceruta-registro.html && grep -q 'id="registration-tutorial-skip"' /tmp/dulceruta-registro.html && grep -q 'id="open-register-tour"' /tmp/dulceruta-registro.html && grep -q 'id="register-geolocate"' /tmp/dulceruta-registro.html; then
               echo 'Tutorial publico en Cloudflare Pages: OK'
               found=1
               break
