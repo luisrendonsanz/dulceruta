@@ -101,9 +101,19 @@ function render() {
 
 async function loadPoints() {
   try {
-    const response = await fetch(ROOT + 'puntos.json', { cache: 'no-store' });
-    if (!response.ok) throw new Error('No se pudo descargar puntos.json');
-    const raw: unknown = await response.json();
+    const live = await fetch(ROOT + 'api/puntos', { cache: 'no-store' });
+    let raw: unknown;
+    if (live.ok && live.headers.get('content-type')?.includes('application/json')) {
+      raw = await live.json();
+    } else if (live.status === 404 || (live.ok && !live.headers.get('content-type')?.includes('application/json'))) {
+      // GitHub Pages no ejecuta Functions; usa el JSON estático allí.
+      const fallback = await fetch(ROOT + 'puntos.json', { cache: 'no-store' });
+      if (!fallback.ok) throw new Error('No se pudo cargar el mapa');
+      raw = await fallback.json();
+    } else {
+      // D1 conectada pero caída: NO mostrar lugares potencialmente retirados.
+      throw new Error('D1 temporalmente no disponible');
+    }
     if (!Array.isArray(raw)) throw new Error('El JSON público debe ser un arreglo');
     const ids = new Set<string>();
     points = raw.flatMap(value => {

@@ -1,70 +1,55 @@
 import './style.css';
 
-// Esta protección es solo visual: GitHub Pages sirve código estático público.
-// El hash no es un secreto y NO constituye autenticación de servidor.
-const PASSWORD_HASH = '8652d8b4341b1fd05a5098bccd88e28a4af3e2a3022aa9b7b7a4e721475e7693';
-const SESSION_KEY = 'dulceruta-editor-session-v1';
-
+// Cloudflare verifica ADMIN_PASSWORD del servidor. La cookie de sesión es HttpOnly.
+const ROOT = import.meta.env.BASE_URL;
 const form = document.getElementById('admin-gate-form') as HTMLFormElement;
 const input = document.getElementById('admin-gate-password') as HTMLInputElement;
 const submit = document.getElementById('admin-gate-submit') as HTMLButtonElement;
 const feedback = document.getElementById('admin-gate-error') as HTMLParagraphElement;
 const gate = document.getElementById('admin-gate') as HTMLElement;
-const editorShell = document.getElementById('admin-shell') as HTMLElement;
+const shell = document.getElementById('admin-shell') as HTMLElement;
 const logout = document.getElementById('admin-logout') as HTMLButtonElement;
-
 let opening = false;
-async function sha256(value: string): Promise<string> {
-  const bytes = new TextEncoder().encode(value);
-  const digest = await crypto.subtle.digest('SHA-256', bytes);
-  return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
-}
-function savedSession(): boolean {
-  try { return sessionStorage.getItem(SESSION_KEY) === PASSWORD_HASH; }
-  catch { return false; }
-}
-async function openEditor(): Promise<void> {
+function error(message: string) { feedback.textContent = message; feedback.hidden = false; }
+async function openEditor() {
   if (opening) return;
-  opening = true;
-  gate.hidden = true;
-  editorShell.hidden = false;
-  try {
-    await import('./editor');
-  } catch (reason) {
-    console.error('No se pudo cargar el editor', reason);
-    editorShell.hidden = true;
-    gate.hidden = false;
-    feedback.hidden = false;
-    feedback.textContent = 'No se pudo cargar el administrador. Recarga la página.';
+  opening = true; gate.hidden = true; shell.hidden = false;
+  try { await import('./editor'); }
+  catch (reason) {
+    console.error(reason);
+    shell.hidden = true; gate.hidden = false;
+    error('No se pudo cargar el editor. Recarga la página.');
     opening = false;
   }
 }
+async function restoreSession() {
+  try {
+    const response = await fetch(ROOT+'api/admin/session', { credentials:'same-origin',cache:'no-store' });
+    if (response.status === 503) { error('Configuración pendiente: D1 o ADMIN_PASSWORD no están listos.'); return; }
+    if (response.ok) {
+      const result: { authenticated?: boolean } = await response.json();
+      if (result.authenticated) await openEditor();
+    }
+  } catch { error('No se pudo conectar con Cloudflare.'); }
+}
 form.addEventListener('submit', async event => {
   event.preventDefault();
-  if (opening || !input.value) return;
-  submit.disabled = true;
-  feedback.hidden = true;
+  if (!input.value || opening) return;
+  submit.disabled = true; feedback.hidden = true;
   try {
-    const valid = await sha256(input.value);
-    if (valid !== PASSWORD_HASH) {
-      feedback.textContent = 'Contraseña incorrecta. Inténtalo nuevamente.';
-      feedback.hidden = false;
-      input.value = '';
-      input.focus();
-      return;
-    }
-    try { sessionStorage.setItem(SESSION_KEY, PASSWORD_HASH); } catch { /* sesión solo en memoria */ }
+    const response = await fetch(ROOT+'api/admin/login', {
+      method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({password:input.value}),
+    });
     input.value = '';
+    if (response.status === 503) { error('Primero configura D1 y ADMIN_PASSWORD en Cloudflare.'); return; }
+    if (!response.ok) { error(response.status===401?'Contraseña incorrecta.':'No se pudo iniciar sesión.'); return; }
     await openEditor();
-  } catch {
-    feedback.textContent = 'Tu navegador no pudo verificar la contraseña. Usa una conexión HTTPS.';
-    feedback.hidden = false;
-  } finally {
-    submit.disabled = false;
-  }
+  } catch { error('No se pudo conectar con Cloudflare.'); }
+  finally { submit.disabled = false; }
 });
-logout.addEventListener('click', () => {
-  try { sessionStorage.removeItem(SESSION_KEY); } catch { /* acceso a storage restringido */ }
-  window.location.reload();
+logout.addEventListener('click', async () => {
+  try { await fetch(ROOT+'api/admin/logout',{method:'POST',credentials:'same-origin'}); }
+  finally { window.location.reload(); }
 });
-if (savedSession()) void openEditor();
+void restoreSession();
