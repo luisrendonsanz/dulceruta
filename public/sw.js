@@ -1,5 +1,5 @@
 // La PWA guarda la interfaz, NO almacena tiles de OpenStreetMap ni promete mapas offline.
-const VERSION = 'dulceruta-github-v4';
+const VERSION = 'dulceruta-github-v5';
 const ROOT = self.registration.scope;
 const SHELL = ['index.html', 'registro.html', 'puntos.json', 'manifest.webmanifest', 'icon-192.png'];
 self.addEventListener('install', event => {

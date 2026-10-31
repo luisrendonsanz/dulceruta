@@ -4,6 +4,7 @@ import L from 'leaflet';
 import { getElement, ROSARIO, registerPwa, downloadJson } from './common';
 import type { ParticipantSubmission, PlaceKind } from './data';
 import { validateDeliveryHours } from './time-range';
+import { initRegistrationTour } from './register-tour';
 
 const map = L.map('registration-map').setView([ROSARIO.lat, ROSARIO.lng], 15);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -105,4 +106,5 @@ getElement('share-file').addEventListener('click', async () => {
     else { downloadJson(submission, name); feedback('No se pudo compartir. Se preparó el JSON para enviarlo manualmente.'); }
   }
 });
+initRegistrationTour();
 registerPwa();

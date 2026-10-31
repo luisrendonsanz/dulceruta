@@ -7,15 +7,17 @@
 </head><body class="page-bg">
 <header class="simple-header"><a href="./">← Volver al mapa</a><a href="./" class="simple-logo">✦ DulceRuta</a><span>EL ROSARIO, SINALOA</span></header>
 <main class="content-wrap">
-  <div class="page-intro"><span class="overline">PARTICIPA EN DULCERUTA</span><h1>¡Registra tu casa <em>o negocio!</em></h1><p>Si vas a regalar dulces, coloca tu ubicación en el mapa y envía el archivo al organizador por WhatsApp. No necesitas una cuenta.</p></div>
+  <div class="page-intro"><span class="overline">PARTICIPA EN DULCERUTA</span><h1>¡Registra tu casa <em>o negocio!</em></h1><p>Si vas a regalar dulces, coloca tu ubicación en el mapa y envía el archivo al organizador por WhatsApp. No necesitas una cuenta.</p>
+    <button id="open-register-tour" class="register-tour-launch" type="button" aria-haspopup="dialog">▶ Ver tutorial paso a paso</button>
+  </div>
   <div class="content-grid">
     <form id="register-form" class="panel" novalidate>
       <div class="step"><b>1</b><div><h2>Datos del participante</h2><p>Tu nombre y apellido son para identificar la solicitud. No se muestran en el mapa.</p></div></div>
-      <div class="two-cols"><label>Nombre *<input id="name" type="text" placeholder="Tu nombre" maxlength="70" autocomplete="given-name" required></label><label>Apellido *<input id="surname" type="text" placeholder="Tu apellido" maxlength="90" autocomplete="family-name" required></label></div>
+      <div id="tour-participant" class="two-cols"><label>Nombre *<input id="name" type="text" placeholder="Tu nombre" maxlength="70" autocomplete="given-name" required></label><label>Apellido *<input id="surname" type="text" placeholder="Tu apellido" maxlength="90" autocomplete="family-name" required></label></div>
       <label>¿Qué vas a registrar?<select id="kind"><option value="casa">Mi casa</option><option value="local">Mi local o negocio</option></select></label>
-      <label>Nombre público del lugar <small>(opcional para casas)</small><input id="place-name" placeholder="Ej. Casa de los dulces / Abarrotes Lupita" maxlength="90"></label>
+      <label id="tour-place">Nombre público del lugar <small>(opcional para casas)</small><input id="place-name" placeholder="Ej. Casa de los dulces / Abarrotes Lupita" maxlength="90"></label>
       <label>Referencia para llegar <small>(opcional y pública)</small><input id="reference" placeholder="Ej. Calle Hidalgo, junto a la plaza" maxlength="180"></label>
-      <div class="two-cols time-range">
+      <div id="tour-hours" class="two-cols time-range">
         <label for="hours-start">Hora de inicio *<input id="hours-start" name="hora-inicio" type="time" required></label>
         <label for="hours-end">Hora de finalización *<input id="hours-end" name="hora-fin" type="time" required></label>
       </div>
@@ -25,13 +27,25 @@
       <div id="registration-map" class="form-map" aria-label="Mapa para marcar tu casa o negocio"></div>
       <div class="map-status"><span id="pin-status">Toca el mapa para colocar un marcador.</span><button id="remove-pin" type="button" hidden>Quitar</button></div>
       <div class="step"><b>3</b><div><h2>Descarga el JSON y envíalo</h2><p>Este formulario no publica tu casa automáticamente.</p></div></div>
-      <label class="consent"><input id="consent" type="checkbox"><span>Confirmo que soy responsable de este lugar o tengo permiso para registrarlo. Acepto que su ubicación, nombre público, referencia y horario puedan mostrarse en DulceRuta tras revisión. Mi nombre y apellido se incluirán solo en la solicitud que enviaré al organizador.</span></label>
+      <label id="tour-consent" class="consent"><input id="consent" type="checkbox"><span>Confirmo que soy responsable de este lugar o tengo permiso para registrarlo. Acepto que su ubicación, nombre público, referencia y horario puedan mostrarse en DulceRuta tras revisión. Mi nombre y apellido se incluirán solo en la solicitud que enviaré al organizador.</span></label>
       <div id="form-error" class="error" role="alert" hidden></div>
-      <button class="btn btn-orange full" type="submit">1. Descargar mi archivo JSON ↓</button>
+      <button id="tour-download" class="btn btn-orange full" type="submit">1. Descargar mi archivo JSON ↓</button>
       <button class="btn btn-outline full" id="share-file" type="button">2. Compartir archivo (elegir WhatsApp)</button>
       <div id="form-success" class="success" role="status" hidden></div>
       <div class="instructions"><h3>¿Cómo mandarlo por WhatsApp?</h3><ol><li>Completa tus datos, marca el mapa y descarga el archivo JSON.</li><li>Abre el chat de WhatsApp del organizador.</li><li>Adjunta el archivo <strong>.json como documento</strong> desde Descargas o Archivos, no como foto.</li><li>Envía el archivo. El organizador revisará la solicitud antes de publicarla.</li></ol><p>En algunos celulares puedes usar el botón «Compartir archivo» y seleccionar WhatsApp. Confirma el envío dentro de WhatsApp.</p></div>
     </form>
     <aside class="aside"><div class="aside-dark"><span>✧</span><h3>¡Únete a la ruta!</h3><p>Ayuda a las familias de El Rosario a encontrar los lugares participantes.</p><hr><strong>Publicación con revisión</strong><p>Tu solicitud no aparecerá en el mapa hasta que la apruebe el organizador.</p></div><div class="aside-light"><strong>Cuida tu privacidad</strong><p>Evita escribir nombres de personas en la descripción pública. Solo registra viviendas con autorización real.</p></div></aside>
   </div>
-</main><script type="module" src="./src/registro.ts"></script></body></html>
+</main>
+<div id="registration-tutorial" class="registration-tutorial" hidden>
+  <div class="registration-tutorial__shade" aria-hidden="true"></div>
+  <section id="registration-tutorial-dialog" class="registration-tutorial__card" role="dialog" aria-modal="true" aria-labelledby="registration-tutorial-title" aria-describedby="registration-tutorial-text" tabindex="-1">
+    <div class="registration-tutorial__heading"><span id="registration-tutorial-progress" class="registration-tutorial__progress"></span><button id="registration-tutorial-skip" type="button" class="registration-tutorial__skip">Omitir tutorial ✕</button></div>
+    <div class="registration-tutorial__dots" id="registration-tutorial-dots" aria-hidden="true"></div>
+    <h2 id="registration-tutorial-title"></h2>
+    <p id="registration-tutorial-text"></p>
+    <label class="registration-tutorial__remember"><input id="registration-tutorial-remember" type="checkbox"><span>No volver a mostrar este tutorial</span></label>
+    <div class="registration-tutorial__actions"><button id="registration-tutorial-back" type="button" class="btn btn-outline">Anterior</button><button id="registration-tutorial-next" type="button" class="btn btn-orange">Siguiente →</button></div>
+  </section>
+</div>
+<script type="module" src="./src/registro.ts"></script></body></html>

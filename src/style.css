@@ -19,3 +19,26 @@
 .panel .time-range input[type="time"]::-webkit-date-and-time-value{text-align:left;min-height:1.25em}
 .panel .time-range input[type="time"]::-webkit-calendar-picker-indicator{cursor:pointer}
 @media(max-width:650px){.time-range{grid-template-columns:minmax(0,1fr);gap:2px}.panel .time-range input[type="time"]{width:100%;font-size:16px}}
+
+
+/* Tutorial guiado: formulario publico, adaptable a Safari y pantallas pequenas. */
+.register-tour-launch{display:inline-flex;align-items:center;gap:8px;border:1px solid #d9c3e8;background:#fff;color:#764597;border-radius:12px;padding:11px 14px;font-size:13px;font-weight:900;cursor:pointer;margin-top:8px}
+.register-tour-launch:hover{background:#f3e8fa}
+.registration-tutorial__shade{position:fixed;inset:0;background:rgba(29,18,42,.66);z-index:2998;pointer-events:auto}
+.registration-tour__target{position:relative!important;z-index:2999!important;outline:4px solid #f9a35f!important;outline-offset:5px!important;border-radius:13px;pointer-events:none!important;box-shadow:0 0 0 8px rgba(255,255,255,.20)}
+.registration-tutorial__card{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);z-index:3001;width:min(460px,calc(100vw - 24px));max-height:calc(100dvh - 40px);overflow:auto;box-sizing:border-box;background:#fff;border:1px solid #eadff0;border-radius:20px;padding:21px;box-shadow:0 20px 68px #140a2173}
+.registration-tutorial__card:focus{outline:none}
+.registration-tutorial__heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.registration-tutorial__progress{font-size:12px;font-weight:900;letter-spacing:.4px;color:#8651a3}
+.registration-tutorial__skip{border:0;background:transparent;color:#856c91;font-size:12px;padding:8px 0;cursor:pointer;font-weight:800}
+.registration-tutorial__dots{display:flex;gap:6px;margin-top:10px}
+.registration-tutorial__dot{height:5px;flex:1;background:#eee6f3;border-radius:99px}
+.registration-tutorial__dot.is-active{background:#f37542}
+.registration-tutorial__card h2{font-size:20px;line-height:1.25;color:#38274d;margin:15px 0 7px}
+.registration-tutorial__card p{font-size:13px;line-height:1.55;color:#71617e;margin:0 0 16px}
+.registration-tutorial__remember{display:flex;align-items:center;gap:10px;border-top:1px solid #f0e7f3;padding-top:13px;font-size:12px;font-weight:800;line-height:1.35;color:#59486b;cursor:pointer}
+.registration-tutorial__remember input{width:18px;height:18px;flex-shrink:0;accent-color:#8652be}
+.registration-tutorial__actions{display:flex;gap:9px;margin-top:15px}
+.registration-tutorial__actions>.btn{flex:1;min-height:43px}
+.registration-tutorial__actions>.btn:disabled{opacity:.45;cursor:default}
+@media(max-width:650px){.registration-tutorial__card{padding:17px 16px;border-radius:17px}.registration-tutorial__card h2{font-size:18px}.registration-tutorial__card p{font-size:12.5px}.registration-tutorial__skip{font-size:12px}.register-tour-launch{width:100%;justify-content:center}}
