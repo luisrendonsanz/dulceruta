@@ -1,0 +1,11 @@
+# Cloudflare Pages: evitar lista de casas obsoleta en el navegador.
+/puntos.json
+  Cache-Control: no-store, max-age=0
+
+# El editor usa una barrera visual; ocultarlo de buscadores NO es autenticación.
+/editor.html
+  X-Robots-Tag: noindex, nofollow
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
