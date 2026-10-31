@@ -57,3 +57,19 @@ jobs:
             sleep 5
           done
           [[ "$found" == "1" ]] || { echo 'ERROR: no se encontro la version del tutorial en Cloudflare'; exit 1; }
+      - name: Comprobar preview privada en Cloudflare
+        shell: bash
+        run: |
+          set -euo pipefail
+          found=0
+          for attempt in {1..40}; do
+            status=$(curl -L -sS --max-time 12 -o /tmp/dulceruta-editor.html -w '%{http_code}' 'https://dulceruta.pages.dev/editor.html' || true)
+            if [[ "$status" == "200" ]] && grep -q 'id="preview-map"' /tmp/dulceruta-editor.html && grep -q 'id="preview-all"' /tmp/dulceruta-editor.html && grep -q 'id="preview-summary"' /tmp/dulceruta-editor.html; then
+              echo 'Vista previa privada del editor desplegada: OK'
+              found=1
+              break
+            fi
+            echo "Intento $attempt: editor HTTP $status, vista previa aún no visible"
+            sleep 5
+          done
+          [[ "$found" == "1" ]] || { echo 'ERROR: vista previa no disponible en Cloudflare'; exit 1; }
