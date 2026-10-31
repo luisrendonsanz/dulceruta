@@ -433,7 +433,17 @@ getElement('search-address').addEventListener('click', () => {
   searchTimer = window.setTimeout(() => void searchAddress(query), Math.max(0, 1500 - (Date.now() - lastSearchTime)));
 });
 
+async function checkPrivacyConfig(): Promise<void> {
+ try {
+  const r=await fetch(ROOT+'api/aviso-config',{cache:'no-store'});
+  if(!r.ok)throw Error('config');
+  const data:{responsable?:string;domicilio?:string;correo?:string}=await r.json();
+  const email=typeof data.correo==='string'&&data.correo.includes('@')&&data.correo.includes('.');
+  getElement('privacy-config-alert').hidden=!!(data.responsable&&data.domicilio&&email);
+ } catch { getElement('privacy-config-alert').hidden=false; }
+}
 async function init(): Promise<void> {
+ void checkPrivacyConfig();
   try {
     const response = await fetch(ROOT + 'api/admin/puntos', {credentials:'same-origin',cache:'no-store'});
     if (!response.ok) throw new Error('HTTP '+response.status);
