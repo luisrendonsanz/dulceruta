@@ -42,6 +42,21 @@
       <div id="import-result" class="muted" role="status"></div>
       <div id="review" hidden><div class="review-top"><strong id="review-count">Pendientes por revisar</strong><button id="select-all" class="btn-text" type="button">Seleccionar todas</button></div><div id="reviews" class="reviews"></div><div class="two-buttons"><button id="approve" class="btn btn-orange" type="button">Agregar seleccionadas al borrador</button><button id="discard" class="btn btn-outline" type="button">Descartar</button></div><p class="muted tiny">Antes de aprobar confirma personalmente que la casa o local dio autorización real. La casilla del JSON por sí sola no comprueba identidad.</p></div>
     </section>
+    <section class="panel admin-preview-panel" aria-labelledby="preview-title">
+      <div class="step"><b aria-hidden="true">◉</b><div><h2 id="preview-title">Vista previa privada del mapa</h2>
+        <p>Revisa todas las ubicaciones importadas antes de aprobarlas o publicarlas. Este mapa solo es visible dentro del administrador.</p></div></div>
+      <div class="admin-preview-head">
+        <strong id="preview-summary" role="status" aria-live="polite">0 por revisar · 0 en borrador</strong>
+        <button id="preview-all" class="btn btn-outline" type="button">Ver todos los puntos</button>
+      </div>
+      <div class="admin-preview-legend" aria-label="Leyenda de ubicaciones">
+        <span><i class="admin-preview-dot is-pending" aria-hidden="true"></i>Por revisar (naranja)</span>
+        <span><i class="admin-preview-dot is-draft" aria-hidden="true"></i>En borrador (morado)</span>
+      </div>
+      <div id="preview-map" class="form-map admin-preview-map" aria-label="Vista previa de ubicaciones pendientes y del borrador"></div>
+      <p id="preview-empty" class="muted">Importa uno o varios JSON para verlos en el mapa antes de publicar.</p>
+      <p class="muted tiny">Pulsa un marcador para consultar el lugar y horario. <strong>Esta vista previa no publica ni guarda cambios en D1.</strong> Para editar usa el mapa de la siguiente sección.</p>
+    </section>
     <section class="panel"><div class="step"><b>2</b><div><h2>Agregar o corregir un punto</h2><p>Opcional: introduce una dirección o coloca directamente un marcador en el mapa.</p></div></div>
       <label>Nombre público<input id="edit-name" maxlength="90" placeholder="Ej. Abarrotes Lupita"></label>
       <label>Referencia para llegar<input id="edit-ref" maxlength="180" placeholder="Calle o referencia"></label>

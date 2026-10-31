@@ -22,6 +22,61 @@ let revision: number | null = null;
 let draft: PublicPoint[] = [];
 type Pending = { point: PublicPoint; contact: string | null; source: string; checked: boolean };
 let pending: Pending[] = [];
+
+/** Mapa independiente: nunca escribe en D1 ni muestra datos personales del solicitante. */
+const previewMap = L.map('preview-map').setView([ROSARIO.lat, ROSARIO.lng], 14);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  maxZoom: 19,
+}).addTo(previewMap);
+const previewLayer = L.layerGroup().addTo(previewMap);
+function previewEntries(): { point: PublicPoint; status: 'pending' | 'draft' }[] {
+  return [
+    ...pending.map(({ point }) => ({ point, status: 'pending' as const })),
+    ...draft.map(point => ({ point, status: 'draft' as const })),
+  ];
+}
+function focusPreview(): void {
+  previewMap.invalidateSize();
+  const items = previewEntries();
+  if (!items.length) {
+    previewMap.setView([ROSARIO.lat, ROSARIO.lng], 14);
+    return;
+  }
+  const bounds = L.latLngBounds(items.map(({ point }) => [point.lat, point.lng] as [number, number]));
+  previewMap.fitBounds(bounds, { padding: [32, 32], maxZoom: 16 });
+}
+function drawPreview(): void {
+  const items = previewEntries();
+  previewLayer.clearLayers();
+  getElement('preview-summary').textContent =
+    pending.length + ' por revisar · ' + draft.length + ' en borrador';
+  getElement('preview-empty').hidden = items.length !== 0;
+  getElement<HTMLButtonElement>('preview-all').disabled = items.length === 0;
+
+  for (const { point, status } of items) {
+    const colorClass = status === 'pending' ? 'admin-preview-pin--pending' : 'admin-preview-pin--draft';
+    const icon = L.divIcon({
+      className: '',
+      html: '<div class="pin ' + colorClass + '"><span>🍬</span></div>',
+      iconSize: [40, 40], iconAnchor: [20, 36],
+    });
+    const marker = L.marker([point.lat, point.lng], { icon, title: point.nombre });
+    const popup = textElement('div', 'admin-preview-popup', '');
+    popup.append(
+      textElement('strong', '', point.nombre),
+      textElement('span', '', status === 'pending' ? 'Pendiente de revisión' : 'En borrador, sin publicar cambios'),
+      textElement('p', '', point.direccion),
+      textElement('small', '', 'Horario: ' + (point.horario || 'Sin horario')),
+    );
+    if (!inRosarioArea(point)) popup.append(textElement('small', 'admin-preview-warning', 'Verifica: ubicación lejos de El Rosario.'));
+    marker.bindPopup(popup, { maxWidth: 270 });
+    marker.addTo(previewLayer);
+  }
+  window.requestAnimationFrame(() => focusPreview());
+}
+getElement('preview-all').addEventListener('click', focusPreview);
+
 let searchTimer: number | undefined;
 let searchAbort: AbortController | null = null;
 let lastSearchTime = 0;
@@ -52,6 +107,7 @@ function drawDraft(): void {
   getElement('draft-counter').textContent = draft.length + ' punto(s) en el borrador local';
   if (!draft.length) {
     list.append(textElement('div', 'empty', 'Todavía no tienes puntos en el borrador.'));
+    drawPreview();
     return;
   }
   for (const p of draft) {
@@ -80,6 +136,7 @@ function drawDraft(): void {
     });
     row.append(caption, edit, remove); list.append(row);
   }
+  drawPreview();
 }
 function resetForm(): void {
   editingId = null;
@@ -133,6 +190,7 @@ function drawPending(): void {
     checkbox.id = 'review-' + index;
     label.append(checkbox, text); list.append(label);
   }
+  drawPreview();
 }
 getElement('select-all').addEventListener('click', () => {
   const shouldCheck = pending.some(x => !x.checked);
