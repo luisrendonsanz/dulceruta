@@ -153,7 +153,7 @@ getElement('approve').addEventListener('click', () => {
   }
   pending = pending.filter(x => !x.checked);
   saveDraft(); drawPending();
-  setMessage('Añadidos ' + added + ' punto(s) al borrador. ' + duplicates + ' duplicado(s) omitido(s). Descarga el JSON para publicarlos en GitHub.');
+  setMessage('Añadidos ' + added + ' punto(s) al borrador. ' + duplicates + ' duplicado(s) omitido(s). Usa «Publicar cambios» para actualizarlos en Cloudflare D1.');
 });
 
 getElement<HTMLInputElement>('files').addEventListener('change', async event => {
