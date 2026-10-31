@@ -109,7 +109,8 @@ function createSubmission(): ParticipantSubmission | null {
   if (apellido.length < 2) { error('Escribe un apellido de al menos 2 letras.', 'surname'); return null; }
   if (tipo === 'local' && !place) { error('Escribe el nombre del negocio o local.', 'place-name'); return null; }
   if (!selectedPosition) { error('Toca el mapa para colocar la ubicación de la casa o local.'); return null; }
-  if (!getElement<HTMLInputElement>('consent').checked) { error('Debes confirmar que tienes autorización para registrar ese lugar.', 'consent'); return null; }
+  if (!getElement<HTMLInputElement>('consent').checked) { error('Solo registra lugares si tienes autorización real de su responsable y eres mayor de edad.', 'consent'); return null; }
+  if (!getElement<HTMLInputElement>('privacy-consent').checked) { error('Lee y acepta la información de privacidad antes de continuar.', 'privacy-consent'); return null; }
   return {
     tipo: 'solicitud_dulceruta', version: 1,
     solicitante: { nombre, apellido },
@@ -122,6 +123,7 @@ function createSubmission(): ParticipantSubmission | null {
       lng: Number(selectedPosition.lng.toFixed(6)), tipo,
     },
     consentimientoUbicacion: true,
+    consentimientoPrivacidad: true,
     fechaSolicitud: new Date().toISOString(),
   };
 }
