@@ -24,9 +24,9 @@ export const REGISTRATION_TOUR_STEPS: readonly RegistrationTourStep[] = [
     description: 'Elige la hora de inicio y la hora de finalización con los selectores del celular. La hora final debe ser posterior a la inicial, el mismo día.',
   },
   {
-    targetId: 'registration-map',
+    targetId: 'tour-registration-location',
     title: 'Marca la ubicación en el mapa',
-    description: 'Acerca el mapa, toca tu casa o negocio y mueve el marcador si es necesario. Comprueba que esté en el lugar correcto antes de continuar.',
+    description: 'Si estás en tu casa, pulsa «Usar mi ubicación» y permite el GPS. También puedes tocar el mapa directamente. Comprueba que el marcador esté en la entrada correcta y arrástralo si hace falta.',
   },
   {
     targetId: 'tour-consent',

@@ -42,3 +42,13 @@
 .registration-tutorial__actions>.btn{flex:1;min-height:43px}
 .registration-tutorial__actions>.btn:disabled{opacity:.45;cursor:default}
 @media(max-width:650px){.registration-tutorial__card{padding:17px 16px;border-radius:17px}.registration-tutorial__card h2{font-size:18px}.registration-tutorial__card p{font-size:12.5px}.registration-tutorial__skip{font-size:12px}.register-tour-launch{width:100%;justify-content:center}}
+
+/* Localización bajo demanda en el registro (no se consulta al entrar). */
+.registration-location-section{min-width:0}
+.registration-location-actions{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin:4px 0 12px}
+.registration-location-button{min-height:45px;flex-shrink:0;font-size:13px}
+.registration-location-button:disabled{opacity:.65;cursor:wait}
+.registration-location-hint{font-size:12px;line-height:1.5;color:#81708d;flex:1;min-width:190px}
+.registration-location-status{background:#eaf6ef;border:1px solid #cde8d5;color:#296a46;border-radius:10px;padding:12px 13px;font-size:12px;line-height:1.55;margin:0 0 12px}
+.registration-location-status.is-error{background:#fff4e8;color:#7b5429;border-color:#f0ddbc}
+@media(max-width:650px){.registration-location-actions{flex-direction:column;align-items:stretch;gap:8px}.registration-location-button{width:100%;font-size:14px}.registration-location-hint{min-width:0}}

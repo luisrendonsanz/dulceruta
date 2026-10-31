@@ -24,7 +24,14 @@
       <p class="muted tiny">Selecciona las horas en tu celular. La hora de finalización debe ser posterior al inicio (mismo día).</p>
       <div class="step"><b>2</b><div><h2>Marca tu ubicación</h2><p>Elige exactamente dónde está tu casa o local.</p></div></div>
       <div class="notice"><strong>Es mejor colocar tu ubicación directamente en el mapa.</strong><p>Acerca el mapa con los dedos y <strong>toca tu casa o local</strong> para fijar el marcador. Es más confiable que escribir una dirección; puedes arrastrarlo si se mueve o queda mal.</p></div>
-      <div id="registration-map" class="form-map" aria-label="Mapa para marcar tu casa o negocio"></div>
+      <div id="tour-registration-location" class="registration-location-section">
+        <div class="registration-location-actions">
+          <button id="register-geolocate" class="btn btn-outline registration-location-button" type="button">◎ Usar mi ubicación</button>
+          <span class="registration-location-hint">Si estás en tu casa o local, puedes localizarte automáticamente.</span>
+        </div>
+        <p id="register-geolocate-status" class="registration-location-status" role="status" aria-live="polite" hidden></p>
+        <div id="registration-map" class="form-map" aria-label="Mapa para marcar tu casa o negocio"></div>
+      </div>
       <div class="map-status"><span id="pin-status">Toca el mapa para colocar un marcador.</span><button id="remove-pin" type="button" hidden>Quitar</button></div>
       <div class="step"><b>3</b><div><h2>Descarga el JSON y envíalo</h2><p>Este formulario no publica tu casa automáticamente.</p></div></div>
       <label id="tour-consent" class="consent"><input id="consent" type="checkbox"><span>Confirmo que soy responsable de este lugar o tengo permiso para registrarlo. Acepto que su ubicación, nombre público, referencia y horario puedan mostrarse en DulceRuta tras revisión. Mi nombre y apellido se incluirán solo en la solicitud que enviaré al organizador.</span></label>

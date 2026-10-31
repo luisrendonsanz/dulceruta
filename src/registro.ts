@@ -25,6 +25,56 @@ function setPin(lat: number, lng: number) {
   getElement('remove-pin').hidden = false;
 }
 map.on('click', event => setPin(event.latlng.lat, event.latlng.lng));
+
+const locateButton = getElement<HTMLButtonElement>('register-geolocate');
+const locateStatus = getElement<HTMLElement>('register-geolocate-status');
+function locationFeedback(message: string, isError = false) {
+  locateStatus.hidden = false;
+  locateStatus.textContent = message;
+  locateStatus.classList.toggle('is-error', isError);
+}
+locateButton.addEventListener('click', () => {
+  if (!navigator.geolocation) {
+    locationFeedback('Este navegador no admite ubicación. Marca tu casa tocando el mapa.', true);
+    return;
+  }
+  locateButton.disabled = true;
+  locateButton.textContent = 'Buscando ubicación…';
+  locationFeedback('Solicitando permiso para obtener tu ubicación…');
+  const reset = () => {
+    locateButton.disabled = false;
+    locateButton.textContent = '◎ Usar mi ubicación';
+  };
+  navigator.geolocation.getCurrentPosition(
+    ({ coords }) => {
+      reset();
+      const latitude = coords.latitude;
+      const longitude = coords.longitude;
+      const accuracy = coords.accuracy;
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+        locationFeedback('No se pudo obtener una posición válida. Toca el mapa para marcar tu casa.', true);
+        return;
+      }
+      map.flyTo([latitude, longitude], Math.max(map.getZoom(), 17));
+      if (Number.isFinite(accuracy) && accuracy > 100) {
+        locationFeedback('Ubicación aproximada (precisión ±' + Math.round(accuracy) + ' m). Acércate al mapa y toca la ubicación exacta de tu casa. No se colocó un marcador automático.', true);
+        return;
+      }
+      setPin(latitude, longitude);
+      locationFeedback('Ubicación encontrada. Confirma que el marcador esté en tu casa o local; puedes arrastrarlo para corregirlo. La ubicación solo se incluirá en el JSON si decides enviarlo.');
+    },
+    reason => {
+      reset();
+      const message = reason.code === 1
+        ? 'No se concedió permiso de ubicación. Actívalo en Safari o marca tu casa tocando el mapa.'
+        : reason.code === 3
+          ? 'La búsqueda de ubicación tardó demasiado. Puedes reintentar o tocar tu casa en el mapa.'
+          : 'No se pudo obtener tu ubicación. Comprueba el GPS o selecciona tu casa directamente en el mapa.';
+      locationFeedback(message, true);
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+  );
+});
 getElement('remove-pin').addEventListener('click', () => {
   if (marker) map.removeLayer(marker);
   marker = null; selectedPosition = null;
