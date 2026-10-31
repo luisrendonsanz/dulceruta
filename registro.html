@@ -34,7 +34,8 @@
       </div>
       <div class="map-status"><span id="pin-status">Toca el mapa para colocar un marcador.</span><button id="remove-pin" type="button" hidden>Quitar</button></div>
       <div class="step"><b>3</b><div><h2>Descarga el JSON y envíalo</h2><p>Este formulario no publica tu casa automáticamente.</p></div></div>
-      <label id="tour-consent" class="consent"><input id="consent" type="checkbox"><span>Confirmo que soy responsable de este lugar o tengo permiso para registrarlo. Acepto que su ubicación, nombre público, referencia y horario puedan mostrarse en DulceRuta tras revisión. Mi nombre y apellido se incluirán solo en la solicitud que enviaré al organizador.</span></label>
+      <label id="tour-consent" class="consent"><input id="consent" type="checkbox" required><span>Declaro que soy mayor de edad, responsable del lugar o que cuento con autorización verificable de su responsable para publicar la ubicación exacta, nombre público, referencia y horario de la casa o negocio tras la revisión.</span></label>
+      <label class="consent"><input id="privacy-consent" type="checkbox" required><span>He leído la <a href="./privacidad.html" target="_blank" rel="noopener">información de privacidad y seguridad</a>. Entiendo que el JSON incluye mi nombre y apellido para revisión y que los datos del lugar aprobados serán públicos.</span></label>
       <div id="form-error" class="error" role="alert" hidden></div>
       <button id="tour-download" class="btn btn-orange full" type="submit">1. Descargar mi archivo JSON ↓</button>
       <button class="btn btn-outline full" id="share-file" type="button">2. Compartir archivo (elegir WhatsApp)</button>
@@ -44,6 +45,7 @@
     <aside class="aside"><div class="aside-dark"><span>✧</span><h3>¡Únete a la ruta!</h3><p>Ayuda a las familias de El Rosario a encontrar los lugares participantes.</p><hr><strong>Publicación con revisión</strong><p>Tu solicitud no aparecerá en el mapa hasta que la apruebe el organizador.</p></div><div class="aside-light"><strong>Cuida tu privacidad</strong><p>Evita escribir nombres de personas en la descripción pública. Solo registra viviendas con autorización real.</p></div></aside>
   </div>
 </main>
+<footer class="public-legal-footer"><a href="./privacidad.html">Privacidad y seguridad</a> · <a href="./reportar.html">Reportar una ubicación</a></footer>
 <div id="registration-tutorial" class="registration-tutorial" hidden>
   <div class="registration-tutorial__shade" aria-hidden="true"></div>
   <section id="registration-tutorial-dialog" class="registration-tutorial__card" role="dialog" aria-modal="true" aria-labelledby="registration-tutorial-title" aria-describedby="registration-tutorial-text" tabindex="-1">
