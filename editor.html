@@ -37,6 +37,12 @@
 <main class="content-wrap"><div class="page-intro"><span class="overline">HERRAMIENTA DEL ORGANIZADOR</span><h1>Administrar <em>ubicaciones</em></h1><p>Importa y revisa los JSON; publica o elimina las casas directamente desde Cloudflare D1, sin entrar a GitHub.</p></div>
 <div class="editor-layout">
   <div class="editor-main">
+    <section class="panel" aria-labelledby="reports-heading">
+      <div class="step"><b aria-hidden="true">!</b><div><h2 id="reports-heading">Reportes de privacidad y seguridad</h2><p>Revisa solicitudes de retirada y corrección de lugares. No se retiran automáticamente para evitar reportes maliciosos.</p></div></div>
+      <div class="review-top"><strong id="reports-count">Consultando reportes...</strong><button id="reports-refresh" class="btn btn-outline" type="button">Actualizar reportes</button></div>
+      <div id="reports-list" class="admin-reports-list" aria-live="polite"></div>
+      <p class="muted tiny">Si un lugar no tiene autorización, retíralo del mapa público cuanto antes. No marques «Atendido» sin haber verificado o resuelto la solicitud.</p>
+    </section>
     <section class="panel"><div class="step"><b>1</b><div><h2>Importar varios JSON</h2><p>Selecciona hasta 100 solicitudes juntas, recibidas por WhatsApp, o un archivo de puntos público para recuperar datos.</p></div></div>
       <label class="upload" for="files">Seleccionar archivos JSON<input id="files" type="file" accept=".json,application/json" multiple></label>
       <div id="import-result" class="muted" role="status"></div>
@@ -73,9 +79,10 @@
     <section class="panel"><div class="step"><b>3</b><div><h2>Borrador y publicación</h2><p id="draft-counter">0 puntos en el borrador</p></div></div>
       <div id="draft-list" class="draft-list"></div>
       <button id="publish" class="btn btn-orange full" type="button">Publicar cambios en el mapa</button>
+      <button id="retire-event" class="btn btn-outline full" type="button">Retirar todas las ubicaciones públicas al terminar el evento</button>
       <div class="two-buttons"><button id="export" class="btn btn-outline" type="button">Descargar respaldo JSON ↓</button><button id="reset" class="btn btn-outline" type="button">Restablecer al publicado</button></div>
       <div class="notice notice-purple"><strong>Publicación con Cloudflare D1</strong><p>«Publicar cambios» sustituye las casas públicas por las del borrador. Para retirar todas, deja el borrador vacío y confirma. «Descargar respaldo» no publica cambios. No subas JSON originales con nombres y apellidos a repositorios públicos.</p></div>
     </section>
   </div>
   <aside class="aside"><div class="aside-dark"><span>☑</span><h3>Revisa antes de publicar</h3><p>El editor valida los archivos y excluye datos personales del JSON consolidado.</p><hr><strong>Acceso verificado por Cloudflare</strong><p>El servidor exige una sesión autorizada antes de permitir cambios en la base de datos D1. No se guardan contraseñas ni tokens en JavaScript.</p></div></aside>
-</div></main></div><script type="module" src="./src/editor-gate.ts"></script></body></html>
+</div></main><footer class="public-legal-footer"><a href="./privacidad.html">Privacidad y seguridad</a> · <a href="./reportar.html">Reportar una ubicación</a></footer></div><script type="module" src="./src/editor-gate.ts"></script></body></html>
