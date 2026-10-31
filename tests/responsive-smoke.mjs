@@ -51,10 +51,13 @@ for (const [name,width,height] of sizes) {
     await page.locator('#registration-tutorial-skip').click();
     await page.reload({waitUntil:'load'});
     await page.waitForTimeout(400);
-    const hidden=await page.locator('#registration-tutorial').isHidden();
+    // El contenedor tiene hijos position:fixed y mide 0x0; comprobar
+    // el atributo hidden y la tarjeta visible, no isVisible() del padre.
+    const hidden=await page.locator('#registration-tutorial').evaluate(el=>el.hidden);
     await page.locator('#open-register-tour').click();
     await page.waitForTimeout(150);
-    const reopened=await page.locator('#registration-tutorial').isVisible();
+    const reopened=await page.locator('#registration-tutorial').evaluate(el=>!el.hidden)
+      && await page.locator('#registration-tutorial-dialog').isVisible();
     if(!reopened) console.error('Tutorial debug:',await page.evaluate(()=>({hidden:document.querySelector('#registration-tutorial')?.hidden,ready:document.readyState,focus:document.activeElement?.id,local:localStorage.getItem('dulceruta-registration-tour-v1')})),jsErrors);
     if(!hidden||!reopened){failures++;console.error('Tutorial persistencia FALLÓ',hidden,reopened);}
     else console.log('Tutorial omitir/no mostrar/reabrir: OK');
