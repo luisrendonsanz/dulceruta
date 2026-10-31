@@ -14,6 +14,7 @@ export interface ParticipantSubmission {
   solicitante: { nombre: string; apellido: string };
   punto: PublicPoint;
   consentimientoUbicacion: true;
+  consentimientoPrivacidad?: true;
   fechaSolicitud: string;
 }
 const object = (val: unknown): val is Record<string, unknown> => typeof val === 'object' && val !== null && !Array.isArray(val);
