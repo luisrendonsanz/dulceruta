@@ -14,3 +14,13 @@ CREATE TABLE IF NOT EXISTS meta (
   op_token TEXT
 );
 INSERT OR IGNORE INTO meta (id,revision,op_token) VALUES (1,0,NULL);
+
+-- También se crea automáticamente al recibir el primer reporte.
+CREATE TABLE IF NOT EXISTS reportes (
+  id TEXT PRIMARY KEY,
+  punto_id TEXT NOT NULL,
+  motivo TEXT NOT NULL,
+  detalle TEXT NOT NULL DEFAULT '',
+  estado TEXT NOT NULL DEFAULT 'pendiente',
+  creado TEXT NOT NULL DEFAULT (datetime('now'))
+);
