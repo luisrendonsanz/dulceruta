@@ -6,6 +6,8 @@ on:
       - '.github/workflows/cloudflare-smoke.yml'
       - 'functions/**'
       - 'src/**'
+      - 'registro.html'
+      - 'public/sw.js'
   workflow_dispatch:
 permissions: {}
 jobs:
@@ -39,3 +41,19 @@ jobs:
           status=$(curl -L -sS --max-time 15 -o /dev/null -w '%{http_code}' 'https://dulceruta.pages.dev/api/admin/puntos')
           test "$status" = "401"
           echo 'La API administrativa exige una sesion real.'
+      - name: Verificar tutorial en Cloudflare Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          found=0
+          for attempt in {1..40}; do
+            status=$(curl -L -sS --max-time 15 -o /tmp/dulceruta-registro.html -w '%{http_code}' 'https://dulceruta.pages.dev/registro.html' || true)
+            if [[ "$status" == "200" ]] && grep -q 'id="registration-tutorial-remember"' /tmp/dulceruta-registro.html && grep -q 'id="registration-tutorial-skip"' /tmp/dulceruta-registro.html && grep -q 'id="open-register-tour"' /tmp/dulceruta-registro.html; then
+              echo 'Tutorial publico en Cloudflare Pages: OK'
+              found=1
+              break
+            fi
+            echo "Aun no publicado: intento $attempt, HTTP $status"
+            sleep 5
+          done
+          [[ "$found" == "1" ]] || { echo 'ERROR: no se encontro la version del tutorial en Cloudflare'; exit 1; }
