@@ -1,0 +1,41 @@
+name: Comprobar API D1 en Cloudflare
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cloudflare-smoke.yml'
+      - 'functions/**'
+      - 'src/**'
+  workflow_dispatch:
+permissions: {}
+jobs:
+  check-public-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Comprobar disponibilidad de API publica y D1
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=0
+          for attempt in {1..40}; do
+            status=$(curl -L -sS --max-time 12 -o /tmp/dulceruta-points.json -w '%{http_code}' 'https://dulceruta.pages.dev/api/puntos' || true)
+            if [[ "$status" == "200" ]] && jq -e 'type=="array"' /tmp/dulceruta-points.json >/dev/null 2>&1; then
+              echo "D1 publica: OK (array JSON)"
+              ok=1
+              break
+            fi
+            echo "Intento $attempt: /api/puntos devuelve HTTP ${status:-sin_respuesta}."
+            sleep 5
+          done
+          [[ "$ok" == "1" ]] || { echo "ERROR: API publica no disponible"; exit 1; }
+      - name: Comprobar que el login no esta abierto
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=$(curl -L -sS --max-time 15 -o /tmp/dulceruta-session.json -w '%{http_code}' 'https://dulceruta.pages.dev/api/admin/session')
+          test "$status" = "200"
+          jq -e '.authenticated == false' /tmp/dulceruta-session.json
+          status=$(curl -L -sS --max-time 15 -o /dev/null -w '%{http_code}' 'https://dulceruta.pages.dev/api/admin/puntos')
+          test "$status" = "401"
+          echo 'La API administrativa exige una sesion real.'
