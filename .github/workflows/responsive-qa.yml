@@ -5,6 +5,10 @@ on:
     paths:
       - ".github/workflows/responsive-qa.yml"
       - "tests/responsive-smoke.mjs"
+      - "tests/admin-preview-smoke.mjs"
+      - "src/editor.ts"
+      - "editor.html"
+      - "src/style.css"
   workflow_dispatch:
 permissions: {}
 jobs:
@@ -30,3 +34,7 @@ jobs:
         env:
           CHROME_BIN: /usr/bin/google-chrome
         run: node tests/responsive-smoke.mjs
+      - name: Importar 6 JSON en mapa de admin sin publicar
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
+        run: node tests/admin-preview-smoke.mjs
